@@ -1,11 +1,18 @@
-export const palette = ['#7C5CFF', '#00D2D3', '#FF6B9A', '#FFC048', '#4CD97B', '#3EA6FF'] as const;
+/** Vibrant "aurora" palette: violet, teal, magenta, amber, mint, sky. */
+export const palette = ['#8B7CFF', '#00E0C6', '#FF4FD8', '#FFB547', '#3DFF9A', '#3EA6FF'] as const;
+export const aurora = ['#6D4BFF', '#00D9C0', '#FF3DCB', '#2E8BFF'] as const;
 export const theme = {
-  bg: '#0B0B14',
-  card: '#151527',
-  cardBorder: '#24243D',
-  text: '#F3F3FA',
-  sub: '#9A9AB8',
-  accent: '#7C5CFF',
-  chip: '#1E1E36',
-  radius: 18,
+  bg: '#05050C',
+  text: '#F5F5FA',
+  sub: '#8C8CA3',
+  separator: 'rgba(255,255,255,0.09)',
+  accent: '#A99BFF',
+  /** Neutral cell colour used by the heatmap's low end. */
+  chip: '#1A1A2B',
+  /** iOS inset-grouped cell (dark, translucent so the aurora bleeds through). */
+  cell: 'rgba(255,255,255,0.065)',
+  sheet: '#0C0C16',
+  up: '#34E39A',
+  down: '#FF5C7A',
+  destructive: '#FF453A',
 } as const;
