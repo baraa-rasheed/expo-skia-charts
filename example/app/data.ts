@@ -18,3 +18,11 @@ export const candles = (n: number): Candle[] => {
   }
   return out;
 };
+
+/** `n` distinct colours starting at `base`, rotating through the palette. */
+export const seriesColors = (base: string, palette: readonly string[], n: number): string[] => {
+  const start = Math.max(0, palette.indexOf(base));
+  return Array.from({ length: n }, (_, i) => (i === 0 ? base : (palette[(start + i) % palette.length] ?? base)));
+};
+
+export const randInt = (max: number) => Math.round(Math.random() * max);
