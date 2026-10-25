@@ -110,6 +110,10 @@ Each release:
 1. Bump `version` in `package.json` (for example `npm version patch`) and push to `main`.
 2. Create a GitHub Release (or push a tag) named `v` + that version, e.g. `v0.2.0`. The workflow fails if the tag and `package.json` disagree, and skips versions already on npm.
 
+You can also publish the current `package.json` version by hand from **Actions → Publish to npm → Run workflow**.
+
+You can also publish the current `package.json` version by hand from **Actions → Publish to npm → Run workflow**.
+
 ## License
 
 MIT

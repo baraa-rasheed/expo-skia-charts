@@ -7,6 +7,8 @@ on:
     types: [published]
   push:
     tags: ['v*']
+  # Manual run from the Actions tab publishes whatever version is in package.json on the chosen branch.
+  workflow_dispatch:
 
 concurrency:
   group: npm-publish-${{ github.ref }}
@@ -29,6 +31,7 @@ jobs:
           cache: npm
 
       - name: Check tag matches package.json version
+        if: github.event_name != 'workflow_dispatch'
         run: |
           TAG="${GITHUB_REF_NAME#v}"
           VERSION="$(node -p "require('./package.json').version")"
