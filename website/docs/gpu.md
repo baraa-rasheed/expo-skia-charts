@@ -7,7 +7,7 @@ title: GPU & performance
 
 Skia v3 replaced the Ganesh/OpenGL backend with **Skia Graphite** running on Dawn (Metal on iOS/macOS, Vulkan on Android). Per the [v3 migration guide](https://github.com/wcandillon/react-native-skia/blob/main/apps/docs/docs/getting-started/migration.md) and [v3.8.0 release notes](https://github.com/wcandillon/react-native-skia/releases/tag/v3.8.0), the drawing API is unchanged; what changed is *where* frames are produced: each `<Canvas>` scene is recorded once per React commit and replayed into a Graphite frame by a dedicated native thread pool. The UI thread only applies animated values — it no longer rasterizes.
 
-## Skia features used by expo-skia-charts
+## Skia features used by react-native-skia-chart
 
 | Feature | Used in | Runs on |
 | --- | --- | --- |

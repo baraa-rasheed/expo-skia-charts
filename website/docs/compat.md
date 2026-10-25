@@ -7,7 +7,7 @@ Drop-in replacement for `@rainbow-me/react-native-animated-charts`.
 
 
 ```tsx
-import { ChartPathProvider, ChartPath, ChartDot, ChartYLabel, ChartXLabel, monotoneCubicInterpolation } from 'expo-skia-charts';
+import { ChartPathProvider, ChartPath, ChartDot, ChartYLabel, ChartXLabel, monotoneCubicInterpolation } from 'react-native-skia-chart';
 
 <ChartPathProvider data={{ points, smoothingStrategy: 'bezier' }}>
   <ChartYLabel style={{ fontSize: 22 }} />

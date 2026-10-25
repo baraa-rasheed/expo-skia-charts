@@ -25,7 +25,7 @@ Tap a chart to open its page.
 ## Install
 
 ```sh
-npx expo install expo-skia-charts react-native-skia react-native-reanimated react-native-worklets react-native-gesture-handler expo-build-properties
+npx expo install react-native-skia-chart react-native-skia react-native-reanimated react-native-worklets react-native-gesture-handler expo-build-properties
 ```
 
 | Peer | Version |
@@ -49,7 +49,7 @@ Install the unscoped `react-native-skia`. `@shopify/react-native-skia` stops at 
 
 ```tsx
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { LineChart } from 'expo-skia-charts';
+import { LineChart } from 'react-native-skia-chart';
 
 export default function App() {
   return (

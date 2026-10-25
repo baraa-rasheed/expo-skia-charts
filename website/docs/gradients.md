@@ -6,7 +6,7 @@ title: Gradients
 Every chart accepts a `gradient` prop. It is rendered as a Skia GPU shader (`LinearGradient`, `RadialGradient` or `SweepGradient`), composited over the chart's marks inside an offscreen GPU layer. Grids and axes are drawn outside that layer, so they are never tinted.
 
 ```tsx
-import { LineChart, type ChartGradient } from 'expo-skia-charts';
+import { LineChart, type ChartGradient } from 'react-native-skia-chart';
 
 const sunset: ChartGradient = {
   type: 'linear',
