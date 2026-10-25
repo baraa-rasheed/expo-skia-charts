@@ -1,4 +1,5 @@
 import type { SkFont } from 'react-native-skia';
+import type { ChartEffects } from './effects/EffectsLayer';
 import type { StyleProp, ViewStyle } from 'react-native';
 
 export interface Padding { top: number; right: number; bottom: number; left: number }
@@ -32,4 +33,6 @@ export interface BaseChartProps {
   /** Optional Skia font used for labels (load with `useFont`). Labels are skipped when absent. */
   font?: SkFont | null;
   backgroundColor?: string;
+  /** GPU effects: shadow, glow, blur, colour filter, blend mode, dash/corner path effects, clip reveal, SkSL shader. */
+  effects?: ChartEffects;
 }
