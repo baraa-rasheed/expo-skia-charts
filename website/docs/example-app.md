@@ -16,17 +16,14 @@ npx expo run:ios   # or run:android. Skia v3 needs a dev build.
 - One screen, **Stocks**, on a native stack. The large title and header are transparent over an animated aurora (blurred Skia circles driven by `useClock`). The header blurs once the title collapses.
 - **Portfolio**: total balance and today's change, then a hero **AAPL** line chart with a native segmented range control (1D / 1W / 1M / 6M / 1Y). The range changes the number of points.
 - **Watchlist**: rows with a ticker and name, a `Sparkline`, the price and a green or red change badge.
-- **Markets** (BTC-USD candlesticks, NVDA area, MSFT volume) and **Insights** (allocation, AMZN revenue, SPY returns) are swipeable **parallax carousels**. Pages snap natively. The chart lags behind the header and fades and scales at the edges, and animated page dots follow your finger. Each carousel auto-advances with a smooth animated scroll every 5 s. It pauses for 8 s after you touch it and stops while the sheet is open.
-- **Breakdown**: the Holdings donut is shown full width.
-- **Discover**: a horizontal strip in the style of Apple Stocks' Top Movers. Tiles peek in from the edge and snap one at a time. The tiles are Goals (rings), GOOGL factors (radar), Risk / Return (scatter) and Mega caps (bubble). The tile nearest the centre scales up, and the others shrink and fade.
-- **Fear & Greed** (gauge) and **ETH-USD activity** (heatmap) are embedded full width at the bottom with no background card. There is no two-column grid.
+- **Markets** (BTC-USD candlesticks, NVDA area, MSFT volume), **Breakdown** (holdings donut, goal rings), **Insights** (allocation, AMZN revenue, SPY returns) and **Discover** (risk / return scatter, mega caps bubbles, GOOGL factors radar, Fear & Greed gauge, ETH-USD activity heatmap). Every chart is embedded full width in one vertical list, with no carousels or horizontal scrollers. Dragging, pinching and scrubbing a chart never competes with a swipe.
 - Blocks fade in one after another (Reanimated `FadeInDown`).
 - Charts stay interactive in place. You can scrub or use the crosshair, tap to select and highlight bars, slices, points, cells and rings, pinch to zoom, use two fingers to pan, and double-tap to reset.
 - Data comes from a seeded PRNG, so charts look the same on every launch.
 
 ## Customize sheet
 
-Each section has a subtle **See All ›** link. You can also tap a watchlist row or a tile title. Either one opens a native bottom sheet (`presentation: 'formSheet'`, detents 60% / 100%, grabber). The home page scrolls smoothly so the chart you are editing sits centred in the area still visible above the sheet. If that chart is inside a carousel (for example when you tap the BTC-USD watchlist row), the carousel also swipes to the right page.
+Each section has a subtle **See All ›** link. You can also tap a watchlist row or a tile title. Either one opens a native bottom sheet (`presentation: 'formSheet'`, detents 60% / 100%, grabber). The home page scrolls smoothly so the chart you are editing sits centred in the area still visible above the sheet.
 
 The sheet follows iOS Settings patterns, with inset-grouped sections, native switches, segmented controls, glassy `expo-blur` buttons, SF Symbols (`expo-symbols`) and haptics:
 

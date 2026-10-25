@@ -5,15 +5,14 @@ import * as Haptics from 'expo-haptics';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { DarkTheme, NavigationContainer, useIsFocused, type Theme } from '@react-navigation/native';
+import { DarkTheme, NavigationContainer, type Theme } from '@react-navigation/native';
 import { createNativeStackNavigator, type NativeStackScreenProps } from '@react-navigation/native-stack';
 import { CHARTS, type ChartDef } from './app/charts';
 import { Aurora } from './app/Aurora';
-import { ChartView, EmbeddedChart, SeeAll, Tile, WatchRow } from './app/ChartCard';
+import { ChartView, EmbeddedChart, SeeAll, WatchRow } from './app/ChartCard';
 import { CustomizeSheet } from './app/CustomizeSheet';
 import { ChartStoreProvider, useChartStore } from './app/store';
 import { theme } from './app/theme';
-import { Carousel, Strip, type CarouselHandle } from './app/Carousel';
 import { Segmented } from './app/Segmented';
 
 export type RootStackParamList = { Home: undefined; Customize: { id: string } };
@@ -38,19 +37,14 @@ const WATCHLIST = [
   { ticker: 'BTC-USD', name: 'Bitcoin', id: 'candle', seed: 5 },
   { ticker: 'MSFT', name: 'Microsoft Corp.', id: 'bar', seed: 42 },
 ] as const;
-/** Horizontal peek strip ("Discover"): compact charts, the next one peeking in from the right. */
-const STRIP = ['rings', 'radar', 'scatter', 'bubble'] as const;
-/** Swipeable parallax carousels (section → chart ids). */
-const CAROUSELS = {
-  markets: ['candle', 'area', 'bar'],
-  insights: ['stackedArea', 'stackedBar', 'histogram'],
-} as const;
-type CarouselKey = keyof typeof CAROUSELS;
-const WIDE_MIDDLE = ['pie'];
-const WIDE_BOTTOM = ['gauge', 'heatmap'];
-const carouselOf = (id: string): CarouselKey | undefined =>
-  (Object.keys(CAROUSELS) as CarouselKey[]).find((k) => (CAROUSELS[k] as readonly string[]).includes(id));
-const inStrip = (id: string) => (STRIP as readonly string[]).includes(id);
+// Home sections, top to bottom. Every chart is full width – no horizontal scrollers, so dragging,
+// pinching and scrubbing a chart never fights with a carousel.
+const SECTIONS: { title: string; hint: string; ids: string[] }[] = [
+  { title: 'Markets', hint: 'Prices & volume', ids: ['candle', 'area', 'bar'] },
+  { title: 'Breakdown', hint: 'Allocation', ids: ['pie', 'rings'] },
+  { title: 'Insights', hint: 'Portfolio analytics', ids: ['stackedArea', 'stackedBar', 'histogram'] },
+  { title: 'Discover', hint: 'Risk & factors', ids: ['scatter', 'bubble', 'radar', 'gauge', 'heatmap'] },
+];
 const byId = (id: string): ChartDef | undefined => CHARTS.find((d) => d.id === id);
 
 type ViewRef = React.ComponentRef<typeof View>;
@@ -68,12 +62,8 @@ function HomeScreen({ navigation }: NativeStackScreenProps<RootStackParamList, '
   const scrollRef = useRef<ScrollRef>(null);
   const offset = useRef(0);
   const nodes = useRef(new Map<string, ViewRef>());
-  const carousels = useRef(new Map<CarouselKey, CarouselHandle>());
-  const focused = useIsFocused();
   const onScroll = useCallback((e: NativeSyntheticEvent<NativeScrollEvent>) => { offset.current = e.nativeEvent.contentOffset.y; }, []);
   const full = width - PAD * 2;
-  const stripW = Math.round(width * 0.62);
-  const strip = useRef<CarouselHandle>(null);
 
   /**
    * Opens the sheet and, in the same frame, smoothly scrolls the chart being edited into the strip of
@@ -81,11 +71,7 @@ function HomeScreen({ navigation }: NativeStackScreenProps<RootStackParamList, '
    */
   const open = useCallback((id: string) => {
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    // Charts inside a carousel: swipe the carousel to that page too, then scroll the carousel into view.
-    const ck = carouselOf(id);
-    if (ck) carousels.current.get(ck)?.scrollToId(id);
-    if (inStrip(id)) strip.current?.scrollToId(id);
-    nodes.current.get(ck ?? (inStrip(id) ? 'discover' : id))?.measureInWindow((_x: number, y: number, _w: number, h: number) => {
+    nodes.current.get(id)?.measureInWindow((_x: number, y: number, _w: number, h: number) => {
       const top = insets.top + BAR;
       const visible = height * (1 - SHEET_DETENT) - top;
       const desired = top + Math.max(8, (visible - h) / 2);
@@ -107,23 +93,6 @@ function HomeScreen({ navigation }: NativeStackScreenProps<RootStackParamList, '
       <Stagger key={id} i={k++}>
         <View ref={register(id)} collapsable={false} style={styles.divider}>
           <EmbeddedChart def={def} cfg={cfg} width={full} onOpen={() => open(id)} />
-        </View>
-      </Stagger>
-    );
-  };
-
-  const carousel = (key: CarouselKey, title: string, hint: string) => {
-    const defs = CAROUSELS[key].map(byId).filter((d): d is ChartDef => d !== undefined);
-    return (
-      <Stagger key={key} i={k++}>
-        <View style={styles.carouselHead}>
-          <Text style={styles.section}>{title}</Text>
-          <Text style={styles.sub}>{hint}</Text>
-        </View>
-        {/* Bleeds to the screen edges so pages swipe edge-to-edge; content keeps the page padding. */}
-        <View ref={register(key)} collapsable={false} style={[styles.divider, styles.bleed]}>
-          <Carousel ref={(h) => { if (h) carousels.current.set(key, h); else carousels.current.delete(key); }}
-            defs={defs} configs={configs} width={width} paused={!focused} inset={PAD} onOpen={open} />
         </View>
       </Stagger>
     );
@@ -165,28 +134,15 @@ function HomeScreen({ navigation }: NativeStackScreenProps<RootStackParamList, '
           ))}
         </Stagger>
 
-{carousel('markets', 'Markets', 'Swipe to switch')}
-
-        <Text style={[styles.section, styles.sectionGap]}>Breakdown</Text>
-        {WIDE_MIDDLE.map((id) => wide(id))}
-
-        <Stagger i={k++}>
-          <View style={styles.carouselHead}>
-            <Text style={styles.section}>Discover</Text>
-            <Text style={styles.sub}>Analytics</Text>
-          </View>
-          <View ref={register('discover')} collapsable={false} style={[styles.divider, styles.bleed]}>
-            <Strip ref={strip} ids={STRIP} itemWidth={stripW} gap={16} inset={PAD}
-              renderItem={(id) => {
-                const def = byId(id);
-                const cfg = configs[id];
-                return def && cfg ? <Tile def={def} cfg={cfg} width={stripW} height={stripW * 0.8 + 64} onOpen={() => open(id)} /> : null;
-              }} />
-          </View>
-        </Stagger>
-
-        {carousel('insights', 'Insights', 'Portfolio analytics')}
-        {WIDE_BOTTOM.map(wide)}
+        {SECTIONS.map((sec) => [
+          <Stagger key={sec.title} i={k++}>
+            <View style={styles.sectionHead}>
+              <Text style={styles.section}>{sec.title}</Text>
+              <Text style={styles.sub}>{sec.hint}</Text>
+            </View>
+          </Stagger>,
+          ...sec.ids.map(wide),
+        ])}
         <Text style={styles.footer}>Rendered with react-native-skia 3.8 · Graphite GPU</Text>
       </ScrollView>
     </View>
@@ -257,9 +213,7 @@ const styles = StyleSheet.create({
   heroChart: { marginHorizontal: -4 },
   sectionRow: { marginTop: 30, marginBottom: 4 },
   section: { color: theme.text, fontSize: 24, fontWeight: '800', letterSpacing: -0.4 },
-  sectionGap: { marginTop: 30, marginBottom: 2 },
   divider: { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: theme.separator },
-  carouselHead: { marginTop: 30, marginBottom: 2, flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between' },
-  bleed: { marginHorizontal: -PAD },
+  sectionHead: { marginTop: 30, marginBottom: 2, flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between' },
   footer: { color: theme.sub, fontSize: 12, textAlign: 'center', marginTop: 28 },
 });
