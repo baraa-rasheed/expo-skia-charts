@@ -16,7 +16,7 @@ export interface RadarChartProps extends Omit<BaseChartProps, 'padding'> {
 }
 
 /** Radar / spider chart. Polygons scale out from the center. */
-export const RadarChart = ({ effects, width, height, style, axes, series, max, rings = 4, gridColor = 'rgba(128,128,128,0.3)', labelColor = '#666', font, animation, backgroundColor }: RadarChartProps) => {
+export const RadarChart = ({ effects, gradient, width, height, style, axes, series, max, rings = 4, gridColor = 'rgba(128,128,128,0.3)', labelColor = '#666', font, animation, backgroundColor }: RadarChartProps) => {
   const cx = width / 2;
   const cy = height / 2;
   const r = Math.min(width, height) / 2 - (font ? 28 : 8);
@@ -53,7 +53,7 @@ export const RadarChart = ({ effects, width, height, style, axes, series, max, r
   const transform = useDerivedValue(() => [{ translateX: cx }, { translateY: cy }, { scale: progress.value }, { translateX: -cx }, { translateY: -cy }]);
   return (
     <Canvas style={[{ width, height, backgroundColor }, style]}>
-      <EffectsLayer effects={effects} width={width} height={height}>
+      <EffectsLayer effects={effects} gradient={gradient} width={width} height={height}>
       {grid.map((p, i) => <Path key={`g${i}`} path={p} style="stroke" color={gridColor} strokeWidth={1} />)}
       {axes.map((a, i) => {
         const x = cx + Math.cos(angle(i)) * r;

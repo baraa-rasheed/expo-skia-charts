@@ -38,7 +38,7 @@ export interface BubbleChartProps extends BaseChartProps {
 }
 
 /** Bubble chart – third dimension `z` mapped to area. */
-export const BubbleChart = ({ effects, width, height, style, data, color = '#E17055', minRadius = 4, maxRadius = 24, opacity = 0.6, showGrid = true, font, formatY, animation, backgroundColor, padding }: BubbleChartProps) => {
+export const BubbleChart = ({ effects, gradient, width, height, style, data, color = '#E17055', minRadius = 4, maxRadius = 24, opacity = 0.6, showGrid = true, font, formatY, animation, backgroundColor, padding }: BubbleChartProps) => {
   const pad = resolvePadding(padding, maxRadius);
   if (font) pad.left = Math.max(pad.left, 36);
   const { dots, yS, ticks } = useMemo(() => {
@@ -52,8 +52,8 @@ export const BubbleChart = ({ effects, width, height, style, data, color = '#E17
   const progress = useEntryProgress(animation ?? { duration: 800 }, [dots]);
   return (
     <Canvas style={[{ width, height, backgroundColor }, style]}>
-      <EffectsLayer effects={effects} width={width} height={height}>
       {showGrid ? <Grid width={width} height={height} padding={pad} yTicks={ticks} yScale={yS} font={font} formatY={formatY} /> : null}
+      <EffectsLayer effects={effects} gradient={gradient} width={width} height={height}>
       <Group>
         {dots.map((d, i) => <Dot key={i} {...d} opacity={opacity} progress={progress} delay={(i / Math.max(1, dots.length)) * 0.5} />)}
       </Group>

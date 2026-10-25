@@ -29,7 +29,7 @@ const Slice = ({ cx, cy, r, inner, start, sweep, color, progress, startAngle }: 
 };
 
 /** Pie / donut chart; slices sweep open on the UI thread. */
-export const PieChart = ({ effects, width, height, style, data, innerRadius = 0, padAngle = 0, startAngle = -90, animation, backgroundColor, centerLabel, centerLabelColor = '#222', centerFont, font }: PieChartProps) => {
+export const PieChart = ({ effects, gradient, width, height, style, data, innerRadius = 0, padAngle = 0, startAngle = -90, animation, backgroundColor, centerLabel, centerLabelColor = '#222', centerFont, font }: PieChartProps) => {
   const size = Math.min(width, height);
   const cx = width / 2;
   const cy = height / 2;
@@ -49,7 +49,7 @@ export const PieChart = ({ effects, width, height, style, data, innerRadius = 0,
   const cf = centerFont ?? font;
   return (
     <Canvas style={[{ width, height, backgroundColor }, style]}>
-      <EffectsLayer effects={effects} width={width} height={height}>
+      <EffectsLayer effects={effects} gradient={gradient} width={width} height={height}>
       <Group>
         {slices.map((s, i) => <Slice key={i} cx={cx} cy={cy} r={r} inner={inner} start={s.start} sweep={s.sweep} color={s.color} progress={progress} startAngle={startAngle} />)}
       </Group>

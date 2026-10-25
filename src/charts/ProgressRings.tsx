@@ -28,13 +28,13 @@ const Ring = ({ cx, cy, r, thickness, ring, index, duration, trackOpacity }: { c
 };
 
 /** Apple-Activity-style concentric progress rings. */
-export const ProgressRings = ({ effects, width, height, style, data, thickness = 18, gap = 4, trackOpacity = 0.2, animation, backgroundColor }: ProgressRingsProps) => {
+export const ProgressRings = ({ effects, gradient, width, height, style, data, thickness = 18, gap = 4, trackOpacity = 0.2, animation, backgroundColor }: ProgressRingsProps) => {
   const cx = width / 2;
   const cy = height / 2;
   const outer = Math.min(width, height) / 2 - thickness / 2;
   return (
     <Canvas style={[{ width, height, backgroundColor }, style]}>
-      <EffectsLayer effects={effects} width={width} height={height}>
+      <EffectsLayer effects={effects} gradient={gradient} width={width} height={height}>
       {data.map((ring, i) => (
         <Ring key={i} cx={cx} cy={cy} r={outer - i * (thickness + gap)} thickness={thickness} ring={ring} index={i} duration={animation?.duration ?? 1000} trackOpacity={trackOpacity} />
       ))}
