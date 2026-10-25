@@ -107,6 +107,8 @@ export const LineChart = (props: LineChartProps) => {
   const pys = useMemo(() => first?.line.map((p) => p.y) ?? [], [first]);
   const active = useSharedValue(0);
   const index = useSharedValue(-1);
+  // Last scrubbed index: kept while the cursor fades out so it doesn't jump on release.
+  const shown = useSharedValue(-1);
   const findIndex = (x: number) => {
     'worklet';
     let best = 0;
@@ -127,11 +129,11 @@ export const LineChart = (props: LineChartProps) => {
     .enabled(interactive && pxs.length > 0)
     .minDistance(0)
     .shouldCancelWhenOutside(false)
-    .onBegin((e) => { active.value = withTiming(1, { duration: 120 }); index.value = findIndex(e.x); })
-    .onUpdate((e) => { index.value = findIndex(e.x); })
+    .onBegin((e) => { const i = findIndex(e.x); shown.value = i; index.value = i; active.value = withTiming(1, { duration: 120 }); })
+    .onUpdate((e) => { const i = findIndex(e.x); shown.value = i; index.value = i; })
     .onFinalize(() => { active.value = withTiming(0, { duration: 160 }); index.value = -1; });
-  const cx = useDerivedValue(() => (index.value >= 0 ? (pxs[index.value] ?? 0) : (pxs[pxs.length - 1] ?? 0)));
-  const cy = useDerivedValue(() => (index.value >= 0 ? (pys[index.value] ?? 0) : (pys[pys.length - 1] ?? 0)));
+  const cx = useDerivedValue(() => (shown.value >= 0 ? (pxs[shown.value] ?? 0) : (pxs[pxs.length - 1] ?? 0)));
+  const cy = useDerivedValue(() => (shown.value >= 0 ? (pys[shown.value] ?? 0) : (pys[pys.length - 1] ?? 0)));
   const p1 = useDerivedValue(() => vec(cx.value, pad.top));
   const p2 = useDerivedValue(() => vec(cx.value, height - pad.bottom));
 

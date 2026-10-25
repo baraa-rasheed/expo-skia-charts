@@ -75,6 +75,7 @@ export const CandlestickChart = ({ effects, width, height, style, data, positive
   const xs = useMemo(() => candles.map((c) => c.x + c.w / 2), [candles]);
   const idx = useSharedValue(-1);
   const active = useSharedValue(0);
+  const shown = useSharedValue(-1);
   const find = (x: number) => {
     'worklet';
     let b = 0; let bd = Infinity;
@@ -84,10 +85,10 @@ export const CandlestickChart = ({ effects, width, height, style, data, positive
   const emit = (i: number) => onScrub?.(i >= 0 ? (data[i] ?? null) : null, i);
   useAnimatedReaction(() => idx.value, (i, prev) => { if (i !== prev && onScrub) runOnJS(emit)(i); });
   const gesture = Gesture.Pan().enabled(interactive).minDistance(0)
-    .onBegin((e) => { active.value = withTiming(1, { duration: 100 }); idx.value = find(e.x); })
-    .onUpdate((e) => { idx.value = find(e.x); })
-    .onFinalize(() => { active.value = withTiming(0); idx.value = -1; });
-  const cxv = useDerivedValue(() => xs[Math.max(0, idx.value)] ?? 0);
+    .onBegin((e) => { const i = find(e.x); shown.value = i; idx.value = i; active.value = withTiming(1, { duration: 100 }); })
+    .onUpdate((e) => { const i = find(e.x); shown.value = i; idx.value = i; })
+    .onFinalize(() => { active.value = withTiming(0, { duration: 160 }); idx.value = -1; });
+  const cxv = useDerivedValue(() => xs[Math.max(0, shown.value)] ?? 0);
   const p1 = useDerivedValue(() => vec(cxv.value, pad.top));
   const p2 = useDerivedValue(() => vec(cxv.value, height - pad.bottom));
 
