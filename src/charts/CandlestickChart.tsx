@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { View } from 'react-native';
-import { Canvas, Group, Line, Rect, vec } from '@shopify/react-native-skia';
+import { Canvas, Group, Line, Rect, vec } from 'react-native-skia';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { runOnJS, useAnimatedReaction, useDerivedValue, useSharedValue, withTiming, type SharedValue } from 'react-native-reanimated';
 import type { BaseChartProps, Candle } from '../types';

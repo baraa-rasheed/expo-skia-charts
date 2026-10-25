@@ -1,5 +1,5 @@
 import React from 'react';
-import { Group, Line, Text, vec, type SkFont } from '@shopify/react-native-skia';
+import { Group, Line, Text, vec, type SkFont } from 'react-native-skia';
 import type { Padding } from '../types';
 
 export interface GridProps {
