@@ -16,7 +16,8 @@ npx expo run:ios   # or run:android. Skia v3 needs a dev build.
 - One screen, **Stocks**, on a native stack. The large title and header are transparent over an animated aurora (blurred Skia circles driven by `useClock`). The header blurs once the title collapses.
 - **Portfolio**: total balance and today's change, then a hero **AAPL** line chart with a native segmented range control (1D / 1W / 1M / 6M / 1Y). The range changes the number of points.
 - **Watchlist**: rows with a ticker and name, a `Sparkline`, the price and a green or red change badge.
-- **Markets** and **Insights**: full-width charts embedded straight into the page with no background cards, separated by hairlines. They include BTC-USD candlesticks, NVDA area, MSFT volume bars, portfolio allocation (stacked area), AMZN revenue (stacked bar), SPY returns (histogram) and ETH-USD activity (heatmap).
+- **Markets** (BTC-USD candlesticks, NVDA area, MSFT volume) and **Insights** (allocation, AMZN revenue, SPY returns) are swipeable **parallax carousels**. Pages snap natively. The chart lags behind the header and fades and scales at the edges, and animated page dots follow your finger. Each carousel auto-advances with a smooth animated scroll every 5 s. It pauses for 8 s after you touch it and stops while the sheet is open.
+- **ETH-USD activity** (heatmap) is embedded full width with no background card.
 - **Discover**: a staggered two-column masonry grid with Holdings (donut), Risk / Return (scatter), GOOGL factors (radar), Fear & Greed (gauge), Goals (rings) and Mega caps (bubble).
 - Blocks fade in one after another (Reanimated `FadeInDown`).
 - Charts stay interactive in place (scrubbing, crosshair).
@@ -24,7 +25,7 @@ npx expo run:ios   # or run:android. Skia v3 needs a dev build.
 
 ## Customize sheet
 
-Each section has a subtle **See All ›** link. You can also tap a watchlist row or a tile title. Either one opens a native bottom sheet (`presentation: 'formSheet'`, detents 60% / 100%, grabber). The home page scrolls smoothly so the chart you are editing sits centred in the area still visible above the sheet.
+Each section has a subtle **See All ›** link. You can also tap a watchlist row or a tile title. Either one opens a native bottom sheet (`presentation: 'formSheet'`, detents 60% / 100%, grabber). The home page scrolls smoothly so the chart you are editing sits centred in the area still visible above the sheet. If that chart is inside a carousel (for example when you tap the BTC-USD watchlist row), the carousel also swipes to the right page.
 
 The sheet follows iOS Settings patterns, with inset-grouped sections, native switches, segmented controls, glassy `expo-blur` buttons, SF Symbols (`expo-symbols`) and haptics:
 
