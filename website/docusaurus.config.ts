@@ -5,7 +5,7 @@ import type * as Preset from '@docusaurus/preset-classic';
 const config: Config = {
   title: 'expo-skia-charts',
   tagline: 'GPU-accelerated, animated charts for React Native & Expo — built on react-native-skia v3.',
-  favicon: 'img/logo.svg',
+  favicon: 'img/favicon.svg',
   future: { v4: true },
   url: 'https://baraa-rasheed.github.io',
   baseUrl: '/expo-skia-charts/',

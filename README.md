@@ -1,17 +1,54 @@
-# expo-skia-charts
+<p align="center">
+  <img src="website/static/img/logo.svg" width="72" alt="" />
+</p>
 
-GPU-accelerated charts for Expo / React Native, built on **react-native-skia v3.8** (Graphite: Metal / Vulkan).
+<h1 align="center">expo-skia-charts</h1>
 
-### 📖 Docs: **https://baraa-rasheed.github.io/expo-skia-charts/**
+<p align="center">
+  Charts for Expo and React Native that are drawn on the GPU with Skia, animated on the UI thread, and easy for you or your coding agent to get right first time.
+  <br />
+  <a href="https://baraa-rasheed.github.io/expo-skia-charts/"><b>Docs</b></a> ·
+  <a href="https://baraa-rasheed.github.io/expo-skia-charts/docs/agents">Agent guide</a> ·
+  <a href="example">Example app</a>
+</p>
 
-## 🤖 Agent-ready
+---
 
-Built for AI coding agents (Cursor, Claude, Grok, Copilot) as a first-class feature:
+Most React Native chart libraries draw SVG through the bridge. This one draws every bar, slice and candle with `react-native-skia` 3.8 (Metal on iOS, Vulkan on Android). Scrubbing, selection and pinch-zoom run as Reanimated worklets. Your finger moves the cursor without a React re-render on each frame.
 
-- **[`AGENTS.md`](AGENTS.md)**: the rules, a component picker and a canonical snippet. Agents pick it up automatically.
-- **[Agent guide](https://baraa-rasheed.github.io/expo-skia-charts/docs/agents)** and [`llms.txt`](https://baraa-rasheed.github.io/expo-skia-charts/llms.txt).
-- **[Type-checked recipes](example/recipes/agent-recipes.tsx)** for every chart, compiled under strict TypeScript.
-- **Predictable API**: required pixel `width`/`height`, plain-array data, and the same optional `gradient` and `effects` props on every chart. Every exported prop has JSDoc.
+```tsx
+import { LineChart } from 'expo-skia-charts';
+
+<LineChart
+  data={prices}
+  width={340}
+  height={200}
+  fill
+  gradient={{ type: 'linear', colors: ['#5EE7DF', '#B490CA'] }}
+  onScrub={(p) => p && setPrice(p.y)}
+/>
+```
+
+## What you get
+
+- **Charts:** Line, Area, Sparkline, Bar, Stacked bar, Histogram, Stacked area, Pie, Donut, Radar, Gauge, Progress rings, Scatter, Bubble, Heatmap, Candlestick and OHLC.
+- **Touch:**
+  - Scrub or use a crosshair on line, area and candle charts.
+  - Tap or long-press to select a bar, slice, point, cell or ring.
+  - Pinch, pan or double-tap to zoom any chart with axes.
+  - [Interaction docs](https://baraa-rasheed.github.io/expo-skia-charts/docs/interaction).
+- **Looks:**
+  - Linear, radial and sweep [gradients](https://baraa-rasheed.github.io/expo-skia-charts/docs/gradients).
+  - Shadows, glow, blur, blend modes, dashes and SkSL shaders through one [`effects`](https://baraa-rasheed.github.io/expo-skia-charts/docs/effects) prop.
+- **Same props everywhere:** every chart takes pixel `width`/`height`, plain-array data, and the same `gradient`, `effects` and `animation` props. Learn one chart and you know the rest.
+
+## Works with coding agents
+
+The API is small and regular on purpose, so an LLM can't easily guess it wrong.
+
+- [`AGENTS.md`](AGENTS.md) ships in the npm package. Cursor, Claude Code, Copilot and others read it automatically. It covers which chart to pick, the rules, and one canonical snippet.
+- [`llms.txt`](https://baraa-rasheed.github.io/expo-skia-charts/llms.txt) and an [agent guide](https://baraa-rasheed.github.io/expo-skia-charts/docs/agents) are published with the docs.
+- [`example/recipes/agent-recipes.tsx`](example/recipes/agent-recipes.tsx) has one recipe per chart, compiled under strict TypeScript alongside the example app, so the snippets stay correct.
 
 ## Install
 
@@ -19,40 +56,15 @@ Built for AI coding agents (Cursor, Claude, Grok, Copilot) as a first-class feat
 npx expo install expo-skia-charts react-native-skia react-native-reanimated react-native-worklets react-native-gesture-handler
 ```
 
-| Peer | Version |
-| --- | --- |
-| `react-native-skia` | >= 3.8.0 |
-| `react-native-reanimated` | >= 4.0.0 |
-| `react-native-worklets` | >= 0.7.0 |
-
-Requires a dev build (no Expo Go) and Android `minSdkVersion` 26 (set via `expo-build-properties`).
-
-## Quick start
-
-```tsx
-import { LineChart } from 'expo-skia-charts';
-
-<LineChart
-  data={[3, 7, 5, 9, 6]}
-  width={320}
-  height={200}
-  effects={{ shadow: true, clipReveal: 800 }}
-/>
-```
-
-Charts: Line, Area, Bar, Stacked Area, Pie/Donut, Radar, Gauge, Progress Rings, Scatter, Heatmap, Candlestick, Sparkline.
-
-Every chart accepts an `effects` prop: shadow, glow, blur, colour filters, blend modes, dash/corner path effects, clip reveal, and SkSL shaders. See [GPU effects](https://baraa-rasheed.github.io/expo-skia-charts/docs/effects).
-
-Every chart also accepts a `gradient` prop: linear, radial, or sweep GPU gradients with custom colours, positions, and start, end, or centre points. See [Gradients](https://baraa-rasheed.github.io/expo-skia-charts/docs/gradients).
+You need `react-native-skia` ≥ 3.8, Reanimated ≥ 4 and worklets ≥ 0.7. It needs a dev build (not Expo Go) and Android `minSdkVersion` 26.
 
 ## Example app
+
+A stocks-style home screen with every chart embedded full width. Tap **See All** on a chart to tweak colours, gradients, effects and interactions live in a native blur sheet.
 
 ```sh
 cd example && npm install && npx expo run:ios   # or run:android
 ```
-
-Includes an interactive playground for every chart and effect.
 
 ## License
 
