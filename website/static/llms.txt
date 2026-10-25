@@ -11,3 +11,5 @@
 - [GPU effects](https://baraa-rasheed.github.io/expo-skia-charts/docs/effects)
 
 Key rules: import from 'expo-skia-charts'; width/height are required pixel numbers; labels need a Skia `font`; `gradient` and `effects` are optional on every chart; requires a dev build.
+
+- Interactivity: scrub (interactive, onScrub, scrubActivation), selection (selectable, selectedIndex, onSelect), and zoom (pinch, pan, double-tap). See /docs/interaction.
