@@ -13,7 +13,7 @@ Bars stacked by series.
 ## Usage
 
 ```tsx
-import { StackedBarChart } from 'expo-skia-charts';
+import { StackedBarChart } from 'react-native-skia-chart';
 
 <StackedBarChart width={w} height={200} series={[{ data: a, color: '#7C5CFF' }, { data: b, color: '#00D2D3' }]} />
 ```

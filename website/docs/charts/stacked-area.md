@@ -13,7 +13,7 @@ Layered areas, absolute or 100% stacked.
 ## Usage
 
 ```tsx
-import { StackedAreaChart } from 'expo-skia-charts';
+import { StackedAreaChart } from 'react-native-skia-chart';
 
 <StackedAreaChart width={w} height={200} percent series={[{ data: a, color: '#6C5CE7' }, { data: b, color: '#00CEC9' }]} />
 ```

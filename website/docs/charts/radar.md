@@ -13,7 +13,7 @@ Multi-axis comparison.
 ## Usage
 
 ```tsx
-import { RadarChart } from 'expo-skia-charts';
+import { RadarChart } from 'react-native-skia-chart';
 
 <RadarChart width={260} height={260} axes={['Speed','Power','Range','Cost','Comfort']} series={[{ data: [7, 5, 8, 4, 6], color: '#7C5CFF' }]} />
 ```

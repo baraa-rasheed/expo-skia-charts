@@ -13,7 +13,7 @@ Bins raw values and renders them as bars.
 ## Usage
 
 ```tsx
-import { Histogram } from 'expo-skia-charts';
+import { Histogram } from 'react-native-skia-chart';
 
 <Histogram width={w} height={180} values={samples} bins={16} color="#FFC048" />
 ```
