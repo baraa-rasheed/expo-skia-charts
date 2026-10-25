@@ -33,7 +33,7 @@ export default function Home(): ReactNode {
           <div key={f.title} className={styles.card}><h3>{f.title}</h3><p>{f.body}</p></div>
         ))}
       </main>
-      <section style={{ maxWidth: 1000, margin: '0 auto', padding: '0 1rem 3rem' }}>
+      <section style={{ maxWidth: 1200, margin: '0 auto', padding: '0 1rem 3rem' }}>
         <h2 style={{ textAlign: 'center' }}>What you get</h2>
         <ChartGrid />
       </section>
