@@ -38,7 +38,7 @@ const colorsFrom = (base: string, n: number) => {
 };
 
 /* ---------------- config ---------------- */
-export type FlagKey = 'grid' | 'fill' | 'smooth' | 'percent' | 'horizontal' | 'donut' | 'needle' | 'ohlc' | 'interactive';
+export type FlagKey = 'grid' | 'fill' | 'smooth' | 'percent' | 'horizontal' | 'donut' | 'needle' | 'ohlc' | 'interactive' | 'select' | 'zoom' | 'longPress';
 export interface ChartConfig {
   color: string;
   count: number;
@@ -83,52 +83,52 @@ const flag = (cfg: ChartConfig, k: FlagKey) => cfg.flags[k] ?? false;
 export const CHARTS: ChartDef[] = [
   {
     id: 'line', title: 'AAPL', subtitle: 'Apple Inc.', kind: 'Line', unit: 'points', min: 5, max: 150, step: 5, initial: 40,
-    flags: [{ key: 'grid', label: 'Grid', initial: false }, { key: 'smooth', label: 'Smooth curve', initial: true }, { key: 'interactive', label: 'Scrubbing', initial: true }],
+    flags: [{ key: 'grid', label: 'Grid', initial: false }, { key: 'smooth', label: 'Smooth curve', initial: true }, { key: 'interactive', label: 'Scrubbing', initial: true }, { key: 'longPress', label: 'Long-press to scrub', initial: false }, { key: 'zoom', label: 'Pinch to zoom', initial: true }],
     build: (cfg) => {
       const d = walk(rngFor('line', cfg), cfg.count);
       return {
         summary: seriesSummary(d, '1D'),
         render: ({ w, h, effects, gradient }) => (
           <LineChart width={w} height={h} data={d} color={cfg.color} curve={flag(cfg, 'smooth') ? 'monotone' : 'linear'}
-            showGrid={flag(cfg, 'grid')} interactive={flag(cfg, 'interactive')} effects={effects} gradient={gradient} />
+            showGrid={flag(cfg, 'grid')} interactive={flag(cfg, 'interactive')} scrubActivation={flag(cfg, 'longPress') ? 'longPress' : 'pan'} zoom={flag(cfg, 'zoom')} effects={effects} gradient={gradient} />
         ),
       };
     },
   },
   {
     id: 'area', title: 'NVDA', subtitle: 'NVIDIA Corp.', kind: 'Area', unit: 'points', min: 5, max: 150, step: 5, initial: 30,
-    flags: [{ key: 'grid', label: 'Grid', initial: false }, { key: 'interactive', label: 'Scrubbing', initial: true }],
+    flags: [{ key: 'grid', label: 'Grid', initial: false }, { key: 'interactive', label: 'Scrubbing', initial: true }, { key: 'longPress', label: 'Long-press to scrub', initial: false }, { key: 'zoom', label: 'Pinch to zoom', initial: true }],
     build: (cfg) => {
       const d = walk(rngFor('area', cfg), cfg.count, 120, 5);
       return {
         summary: seriesSummary(d, '1W'),
-        render: ({ w, h, effects, gradient }) => <AreaChart width={w} height={h} data={d} color={cfg.color} showGrid={flag(cfg, 'grid')} interactive={flag(cfg, 'interactive')} effects={effects} gradient={gradient} />,
+        render: ({ w, h, effects, gradient }) => <AreaChart width={w} height={h} data={d} color={cfg.color} showGrid={flag(cfg, 'grid')} interactive={flag(cfg, 'interactive')} scrubActivation={flag(cfg, 'longPress') ? 'longPress' : 'pan'} zoom={flag(cfg, 'zoom')} effects={effects} gradient={gradient} />,
       };
     },
   },
   {
     id: 'candle', title: 'BTC-USD', subtitle: 'Bitcoin · 1H candles', kind: 'Candlestick', unit: 'candles', min: 10, max: 120, step: 10, initial: 30,
-    flags: [{ key: 'ohlc', label: 'OHLC bars', initial: false }, { key: 'grid', label: 'Grid', initial: false }, { key: 'interactive', label: 'Crosshair', initial: true }],
+    flags: [{ key: 'ohlc', label: 'OHLC bars', initial: false }, { key: 'grid', label: 'Grid', initial: false }, { key: 'interactive', label: 'Crosshair', initial: true }, { key: 'longPress', label: 'Long-press to scrub', initial: false }, { key: 'zoom', label: 'Pinch to zoom', initial: true }],
     build: (cfg) => {
       const d = candlesOf(rngFor('candle', cfg), cfg.count);
       const down = colorsFrom(cfg.color, 3)[2] ?? '#FF5A5F';
       const Comp = flag(cfg, 'ohlc') ? OHLCChart : CandlestickChart;
       return {
         summary: { value: money(d[d.length - 1]?.close ?? 0), delta: pct(d[0]?.open ?? 0, d[d.length - 1]?.close ?? 0), caption: '1M' },
-        render: ({ w, h, effects, gradient }) => <Comp width={w} height={h} data={d} positiveColor={cfg.color} negativeColor={down} showGrid={flag(cfg, 'grid')} interactive={flag(cfg, 'interactive')} effects={effects} gradient={gradient} />,
+        render: ({ w, h, effects, gradient }) => <Comp width={w} height={h} data={d} positiveColor={cfg.color} negativeColor={down} showGrid={flag(cfg, 'grid')} interactive={flag(cfg, 'interactive')} scrubActivation={flag(cfg, 'longPress') ? 'longPress' : 'pan'} zoom={flag(cfg, 'zoom')} effects={effects} gradient={gradient} />,
       };
     },
   },
   {
     id: 'bar', title: 'MSFT', subtitle: 'Microsoft · Daily volume', kind: 'Bar', unit: 'bars', min: 3, max: 30, step: 1, initial: 12,
-    flags: [{ key: 'horizontal', label: 'Horizontal', initial: false }, { key: 'grid', label: 'Grid', initial: false }],
+    flags: [{ key: 'horizontal', label: 'Horizontal', initial: false }, { key: 'grid', label: 'Grid', initial: false }, { key: 'select', label: 'Tap to select', initial: true }, { key: 'zoom', label: 'Pinch to zoom', initial: true }],
     build: (cfg) => {
       const r = rngFor('bar', cfg);
       const d = Array.from({ length: cfg.count }, () => Math.round(10 + r() * 90));
       const total = d.reduce((a, b) => a + b, 0);
       return {
         summary: { value: `${(total / 10).toFixed(1)}M`, caption: 'Volume' },
-        render: ({ w, h, effects, gradient }) => <BarChart key={`${cfg.seed}-${flag(cfg, 'horizontal')}`} width={w} height={h} data={d} color={cfg.color} horizontal={flag(cfg, 'horizontal')} showGrid={flag(cfg, 'grid')} effects={effects} gradient={gradient} />,
+        render: ({ w, h, effects, gradient }) => <BarChart selectable={flag(cfg, 'select')} zoom={flag(cfg, 'zoom')} key={`${cfg.seed}-${flag(cfg, 'horizontal')}`} width={w} height={h} data={d} color={cfg.color} horizontal={flag(cfg, 'horizontal')} showGrid={flag(cfg, 'grid')} effects={effects} gradient={gradient} />,
       };
     },
   },
@@ -146,13 +146,13 @@ export const CHARTS: ChartDef[] = [
   },
   {
     id: 'stackedArea', title: 'My Portfolio', subtitle: 'Allocation over time', kind: 'Stacked area', unit: 'series', min: 1, max: 6, step: 1, initial: 3,
-    flags: [{ key: 'percent', label: '100% stacked', initial: false }, { key: 'grid', label: 'Grid', initial: false }],
+    flags: [{ key: 'percent', label: '100% stacked', initial: false }, { key: 'grid', label: 'Grid', initial: false }, { key: 'zoom', label: 'Pinch to zoom', initial: true }],
     build: (cfg) => {
       const r = rngFor('stackedArea', cfg);
       const s = colorsFrom(cfg.color, cfg.count).map((color, i) => ({ color, data: walk(r, 16, 20 - i * 2, 6) }));
       return {
         summary: { value: `${cfg.count} assets`, caption: flag(cfg, 'percent') ? 'Share' : 'Value' },
-        render: ({ w, h, effects, gradient }) => <StackedAreaChart width={w} height={h} series={s} percent={flag(cfg, 'percent')} showGrid={flag(cfg, 'grid')} effects={effects} gradient={gradient} />,
+        render: ({ w, h, effects, gradient }) => <StackedAreaChart zoom={flag(cfg, 'zoom')} width={w} height={h} series={s} percent={flag(cfg, 'percent')} showGrid={flag(cfg, 'grid')} effects={effects} gradient={gradient} />,
       };
     },
   },
@@ -171,7 +171,7 @@ export const CHARTS: ChartDef[] = [
   },
   {
     id: 'pie', title: 'Holdings', subtitle: 'Portfolio breakdown', kind: 'Donut', unit: 'slices', min: 2, max: 6, step: 1, initial: 4,
-    flags: [{ key: 'donut', label: 'Donut', initial: true }],
+    flags: [{ key: 'donut', label: 'Donut', initial: true }, { key: 'select', label: 'Tap to select', initial: true }],
     build: (cfg) => {
       const r = rngFor('pie', cfg);
       const d = colorsFrom(cfg.color, cfg.count).map((color) => ({ color, value: 5 + Math.round(r() * 40) }));
@@ -179,32 +179,32 @@ export const CHARTS: ChartDef[] = [
       return {
         summary: { value: `${top}%`, caption: 'Largest holding' },
         render: ({ h, effects, gradient }) => (flag(cfg, 'donut')
-          ? <DonutChart key={cfg.seed} width={h} height={h} data={d} thickness={0.32} padAngle={2} effects={effects} gradient={gradient} />
-          : <PieChart key={cfg.seed} width={h} height={h} data={d} padAngle={1.5} effects={effects} gradient={gradient} />),
+          ? <DonutChart selectable={flag(cfg, 'select')} key={cfg.seed} width={h} height={h} data={d} thickness={0.32} padAngle={2} effects={effects} gradient={gradient} />
+          : <PieChart selectable={flag(cfg, 'select')} key={cfg.seed} width={h} height={h} data={d} padAngle={1.5} effects={effects} gradient={gradient} />),
       };
     },
   },
   {
     id: 'scatter', title: 'Risk / Return', subtitle: 'Tech sector, 1Y', kind: 'Scatter', unit: 'points', min: 10, max: 400, step: 20, initial: 80,
-    flags: [{ key: 'grid', label: 'Grid', initial: false }],
+    flags: [{ key: 'grid', label: 'Grid', initial: false }, { key: 'select', label: 'Tap to select', initial: true }, { key: 'zoom', label: 'Pinch to zoom', initial: true }],
     build: (cfg) => {
       const r = rngFor('scatter', cfg);
       const d = Array.from({ length: cfg.count }, () => { const x = r() * 100; return { x, y: x * 0.6 + r() * 30 }; });
       return {
         summary: { value: 'ρ 0.89', caption: 'Correlation' },
-        render: ({ w, h, effects, gradient }) => <ScatterChart key={cfg.seed} width={w} height={h} data={d} color={cfg.color} radius={3} showGrid={flag(cfg, 'grid')} effects={effects} gradient={gradient} />,
+        render: ({ w, h, effects, gradient }) => <ScatterChart selectable={flag(cfg, 'select')} zoom={flag(cfg, 'zoom')} key={cfg.seed} width={w} height={h} data={d} color={cfg.color} radius={3} showGrid={flag(cfg, 'grid')} effects={effects} gradient={gradient} />,
       };
     },
   },
   {
     id: 'bubble', title: 'Mega caps', subtitle: 'Market cap × P/E', kind: 'Bubble', unit: 'bubbles', min: 3, max: 60, step: 3, initial: 15,
-    flags: [{ key: 'grid', label: 'Grid', initial: false }],
+    flags: [{ key: 'grid', label: 'Grid', initial: false }, { key: 'select', label: 'Tap to select', initial: true }, { key: 'zoom', label: 'Pinch to zoom', initial: true }],
     build: (cfg) => {
       const r = rngFor('bubble', cfg);
       const d = Array.from({ length: cfg.count }, () => ({ x: r() * 100, y: r() * 100, z: r() * 1000 }));
       return {
         summary: { value: `${cfg.count} cos`, caption: 'Sector' },
-        render: ({ w, h, effects, gradient }) => <BubbleChart key={cfg.seed} width={w} height={h} data={d} color={cfg.color} maxRadius={18} showGrid={flag(cfg, 'grid')} effects={effects} gradient={gradient} />,
+        render: ({ w, h, effects, gradient }) => <BubbleChart selectable={flag(cfg, 'select')} zoom={flag(cfg, 'zoom')} key={cfg.seed} width={w} height={h} data={d} color={cfg.color} maxRadius={18} showGrid={flag(cfg, 'grid')} effects={effects} gradient={gradient} />,
       };
     },
   },
@@ -223,13 +223,13 @@ export const CHARTS: ChartDef[] = [
   },
   {
     id: 'heatmap', title: 'ETH-USD', subtitle: 'On-chain activity', kind: 'Heatmap', unit: 'weeks', min: 5, max: 40, step: 5, initial: 20,
-    flags: [],
+    flags: [{ key: 'select', label: 'Tap to select', initial: true }, { key: 'zoom', label: 'Pinch to zoom', initial: true }],
     build: (cfg) => {
       const r = rngFor('heatmap', cfg);
       const m = Array.from({ length: 7 }, () => Array.from({ length: cfg.count }, () => r()));
       return {
         summary: { value: `${cfg.count * 7} days`, caption: 'Activity' },
-        render: ({ w, h, effects, gradient }) => <HeatmapChart key={cfg.seed} width={w} height={h} data={m} colors={[theme.chip, cfg.color]} padding={0} effects={effects} gradient={gradient} />,
+        render: ({ w, h, effects, gradient }) => <HeatmapChart selectable={flag(cfg, 'select')} zoom={flag(cfg, 'zoom')} key={cfg.seed} width={w} height={h} data={m} colors={[theme.chip, cfg.color]} padding={0} effects={effects} gradient={gradient} />,
       };
     },
   },
@@ -243,14 +243,14 @@ export const CHARTS: ChartDef[] = [
   },
   {
     id: 'rings', title: 'Goals', subtitle: 'Savings targets', kind: 'Rings', unit: 'rings', min: 1, max: 6, step: 1, initial: 3,
-    flags: [],
+    flags: [{ key: 'select', label: 'Tap to select', initial: true }],
     build: (cfg) => {
       const r = rngFor('rings', cfg);
       const d = colorsFrom(cfg.color, cfg.count).map((color) => ({ color, progress: 0.2 + r() * 0.8 }));
       const avg = Math.round((d.reduce((a, b) => a + b.progress, 0) / d.length) * 100);
       return {
         summary: { value: `${avg}%`, caption: 'Avg. progress' },
-        render: ({ h, effects, gradient }) => <ProgressRings key={`${cfg.seed}-${cfg.count}`} width={h} height={h} data={d} effects={effects} gradient={gradient} />,
+        render: ({ h, effects, gradient }) => <ProgressRings selectable={flag(cfg, 'select')} key={`${cfg.seed}-${cfg.count}`} width={h} height={h} data={d} effects={effects} gradient={gradient} />,
       };
     },
   },

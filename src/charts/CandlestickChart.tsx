@@ -3,6 +3,8 @@ import { EffectsLayer } from '../effects/EffectsLayer';
 import { View } from 'react-native';
 import { Canvas, Group, Line, Rect, vec } from 'react-native-skia';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import { ChartFrame, ZoomGroup, useToChart, type ZoomableProps } from '../interaction';
+
 import { runOnJS, useAnimatedReaction, useDerivedValue, useSharedValue, withTiming, type SharedValue } from 'react-native-reanimated';
 import type { BaseChartProps, Candle } from '../types';
 import { resolvePadding } from '../utils/padding';
@@ -10,7 +12,10 @@ import { extent, linearScale, niceTicks } from '../utils/scale';
 import { useEntryProgress } from '../hooks/useEntryProgress';
 import { Grid } from './Grid';
 
-export interface CandlestickChartProps extends BaseChartProps {
+export interface CandlestickChartProps extends BaseChartProps, ZoomableProps {
+  /** How scrubbing starts: `'pan'` (touch-and-drag, default) or `'longPress'` (hold ~300 ms first; best inside scroll views / carousels). */
+  scrubActivation?: 'pan' | 'longPress';
+
   data: Candle[];
   positiveColor?: string;
   negativeColor?: string;
@@ -57,7 +62,7 @@ const CandleShape = ({ g, progress, variant }: { g: CG; progress: SharedValue<nu
 };
 
 /** Candlestick / OHLC chart with crosshair scrubbing. */
-export const CandlestickChart = ({ effects, gradient, width, height, style, data, positiveColor = '#26A69A', negativeColor = '#EF5350', variant = 'candle', showGrid = true, formatY, font, animation, backgroundColor, padding, interactive = true, onScrub }: CandlestickChartProps) => {
+export const CandlestickChart = ({ effects, gradient, width, height, style, data, positiveColor = '#26A69A', negativeColor = '#EF5350', variant = 'candle', showGrid = true, formatY, font, animation, backgroundColor, padding, interactive = true, onScrub, scrubActivation = 'pan', zoom }: CandlestickChartProps) => {
   const pad = resolvePadding(padding, 12);
   if (font) pad.left = Math.max(pad.left, 40);
   const { candles, yS, ticks } = useMemo(() => {
@@ -88,26 +93,33 @@ export const CandlestickChart = ({ effects, gradient, width, height, style, data
   };
   const emit = (i: number) => onScrub?.(i >= 0 ? (data[i] ?? null) : null, i);
   useAnimatedReaction(() => idx.value, (i, prev) => { if (i !== prev && onScrub) runOnJS(emit)(i); });
+  const toChart = useToChart();
   const gesture = Gesture.Pan().enabled(interactive).minDistance(0)
-    .onBegin((e) => { const i = find(e.x); shown.value = i; idx.value = i; active.value = withTiming(1, { duration: 100 }); })
-    .onUpdate((e) => { const i = find(e.x); shown.value = i; idx.value = i; })
+    .maxPointers(1)
+    .activateAfterLongPress(scrubActivation === 'longPress' ? 300 : 0)
+    .onStart((e) => { const i = find(toChart(e.x, e.y)[0]); shown.value = i; idx.value = i; active.value = withTiming(1, { duration: 100 }); })
+    .onUpdate((e) => { const i = find(toChart(e.x, e.y)[0]); shown.value = i; idx.value = i; })
     .onFinalize(() => { active.value = withTiming(0, { duration: 160 }); idx.value = -1; });
   const cxv = useDerivedValue(() => xs[Math.max(0, shown.value)] ?? 0);
   const p1 = useDerivedValue(() => vec(cxv.value, pad.top));
   const p2 = useDerivedValue(() => vec(cxv.value, height - pad.bottom));
 
   return (
+    <ChartFrame zoom={zoom} width={width} height={height}>
     <View style={[{ width, height }, style]}>
       <GestureDetector gesture={gesture}>
         <Canvas style={{ width, height, backgroundColor }}>
+          <ZoomGroup>
           {showGrid ? <Grid width={width} height={height} padding={pad} yTicks={ticks} yScale={yS} font={font} formatY={formatY} /> : null}
           <EffectsLayer effects={effects} gradient={gradient} width={width} height={height}>
           {candles.map((g, i) => <CandleShape key={i} g={g} progress={progress} variant={variant} />)}
           <Line p1={p1} p2={p2} color="#888" strokeWidth={1} opacity={active} />
           </EffectsLayer>
+          </ZoomGroup>
         </Canvas>
       </GestureDetector>
     </View>
+    </ChartFrame>
   );
 };
 

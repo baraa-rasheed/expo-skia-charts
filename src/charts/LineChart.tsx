@@ -4,6 +4,8 @@ import { EffectsLayer } from '../effects/EffectsLayer';
 import { View } from 'react-native';
 import { Canvas, Circle, Group, Line, LinearGradient, Path, vec } from 'react-native-skia';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import { ChartFrame, ZoomGroup, useToChart, type ZoomableProps } from '../interaction';
+
 import { runOnJS, useAnimatedReaction, useDerivedValue, useSharedValue, withTiming } from 'react-native-reanimated';
 import type { BaseChartProps, CurveType, DataPoint, Point } from '../types';
 import { resolvePadding } from '../utils/padding';
@@ -22,7 +24,10 @@ export interface LineSeries {
   fillOpacity?: number;
 }
 
-export interface LineChartProps extends BaseChartProps {
+export interface LineChartProps extends BaseChartProps, ZoomableProps {
+  /** How scrubbing starts: `'pan'` (touch-and-drag, default) or `'longPress'` (hold ~300 ms first; best inside scroll views / carousels). */
+  scrubActivation?: 'pan' | 'longPress';
+
   /** Single series shorthand. */
   data?: number[] | DataPoint[];
   /** Primary mark colour (hex). */
@@ -82,7 +87,7 @@ const SeriesPath = ({ pts, baseline, curve, color, strokeWidth, fill, fillOpacit
 export const LineChart = (props: LineChartProps) => {
   const {
     width, height, style, animation, font, backgroundColor, data, color = '#6C5CE7', strokeWidth = 2.5, series, curve = 'monotone',
-    fill = false, showGrid = true, gridTicks = 4, formatY, yDomain, interactive = true, cursorColor = '#999', onScrub, entry = 'draw',
+    fill = false, showGrid = true, gridTicks = 4, formatY, yDomain, interactive = true, scrubActivation = 'pan', zoom, cursorColor = '#999', onScrub, entry = 'draw',
   } = props;
   const pad = resolvePadding(props.padding, 16);
   if (font) pad.left = Math.max(pad.left, 36);
@@ -129,12 +134,15 @@ export const LineChart = (props: LineChartProps) => {
     onScrub(i >= 0 && raw ? raw : null, i);
   };
   useAnimatedReaction(() => index.value, (i, prev) => { if (i !== prev && onScrub) runOnJS(emit)(i); });
+  const toChart = useToChart();
   const gesture = Gesture.Pan()
+    .maxPointers(1)
+    .activateAfterLongPress(scrubActivation === 'longPress' ? 300 : 0)
     .enabled(interactive && pxs.length > 0)
     .minDistance(0)
     .shouldCancelWhenOutside(false)
-    .onBegin((e) => { const i = findIndex(e.x); shown.value = i; index.value = i; active.value = withTiming(1, { duration: 120 }); })
-    .onUpdate((e) => { const i = findIndex(e.x); shown.value = i; index.value = i; })
+    .onStart((e) => { const i = findIndex(toChart(e.x, e.y)[0]); shown.value = i; index.value = i; active.value = withTiming(1, { duration: 120 }); })
+    .onUpdate((e) => { const i = findIndex(toChart(e.x, e.y)[0]); shown.value = i; index.value = i; })
     .onFinalize(() => { active.value = withTiming(0, { duration: 160 }); index.value = -1; });
   const cx = useDerivedValue(() => (shown.value >= 0 ? (pxs[shown.value] ?? 0) : (pxs[pxs.length - 1] ?? 0)));
   const cy = useDerivedValue(() => (shown.value >= 0 ? (pys[shown.value] ?? 0) : (pys[pys.length - 1] ?? 0)));
@@ -142,9 +150,11 @@ export const LineChart = (props: LineChartProps) => {
   const p2 = useDerivedValue(() => vec(cx.value, height - pad.bottom));
 
   return (
+    <ChartFrame zoom={zoom} width={width} height={height}>
     <View style={[{ width, height }, style]}>
       <GestureDetector gesture={gesture}>
         <Canvas style={{ width, height, backgroundColor }}>
+          <ZoomGroup>
           {showGrid ? <Grid width={width} height={height} padding={pad} yTicks={ticks} yScale={yScale} font={font} formatY={formatY} /> : null}
           <EffectsLayer effects={props.effects} gradient={props.gradient} width={width} height={height}>
           {geoms.map((g, i) => {
@@ -162,9 +172,11 @@ export const LineChart = (props: LineChartProps) => {
             </Group>
           ) : null}
           </EffectsLayer>
+          </ZoomGroup>
         </Canvas>
       </GestureDetector>
     </View>
+    </ChartFrame>
   );
 };
 

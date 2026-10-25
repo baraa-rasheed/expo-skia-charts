@@ -8,8 +8,9 @@ import { extent, linearScale, niceTicks } from '../utils/scale';
 import { buildBandPath } from '../utils/path';
 import { useEntryProgress } from '../hooks/useEntryProgress';
 import { Grid } from './Grid';
+import { ChartFrame, ZoomGroup, type ZoomableProps } from '../interaction';
 
-export interface StackedAreaChartProps extends BaseChartProps {
+export interface StackedAreaChartProps extends BaseChartProps, ZoomableProps {
   series: { data: number[]; color: string; label?: string }[];
   curve?: CurveType;
   /** Normalise each x to 100%. */
@@ -22,7 +23,7 @@ export interface StackedAreaChartProps extends BaseChartProps {
 }
 
 /** Stacked (or 100%-stacked) area chart. Bands grow up from the baseline. */
-export const StackedAreaChart = ({ effects, gradient, width, height, style, series, curve = 'monotone', percent = false, showGrid = true, formatY, fillOpacity = 0.85, font, animation, backgroundColor, padding }: StackedAreaChartProps) => {
+export const StackedAreaChart = ({ effects, gradient, width, height, style, series, curve = 'monotone', percent = false, showGrid = true, formatY, fillOpacity = 0.85, font, animation, backgroundColor, padding, zoom }: StackedAreaChartProps) => {
   const pad = resolvePadding(padding, 16);
   if (font) pad.left = Math.max(pad.left, 36);
   const { bands, yS, ticks } = useMemo(() => {
@@ -44,13 +45,17 @@ export const StackedAreaChart = ({ effects, gradient, width, height, style, seri
   const base = height - pad.bottom;
   const transform = useDerivedValue(() => [{ translateY: base }, { scaleY: progress.value }, { translateY: -base }]);
   return (
+    <ChartFrame zoom={zoom} width={width} height={height}>
     <Canvas style={[{ width, height, backgroundColor }, style]}>
+      <ZoomGroup>
       {showGrid ? <Grid width={width} height={height} padding={pad} yTicks={ticks} yScale={yS} font={font} formatY={formatY ?? (percent ? (v) => `${v}%` : undefined)} /> : null}
       <EffectsLayer effects={effects} gradient={gradient} width={width} height={height}>
       <Group transform={transform}>
         {bands.map((b, i) => <Path key={i} path={b.path} color={b.color} opacity={fillOpacity} />)}
       </Group>
       </EffectsLayer>
+      </ZoomGroup>
     </Canvas>
+    </ChartFrame>
   );
 };
