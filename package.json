@@ -1,6 +1,6 @@
 {
   "name": "expo-skia-charts",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "GPU-accelerated, animated charts for React Native & Expo, rendered with React Native Skia (docs: github.com/wcandillon/react-native-skia) and animated with Reanimated worklets. A modern successor to @rainbow-me/react-native-animated-charts.",
   "main": "build/index.js",
   "types": "build/index.d.ts",
@@ -49,21 +49,21 @@
   "author": "Baraa Rasheed (https://github.com/baraa-rasheed)",
   "license": "MIT",
   "peerDependencies": {
-    "@shopify/react-native-skia": ">=2.14.0",
     "react": ">=19",
     "react-native": ">=0.79",
     "react-native-gesture-handler": ">=2.20.0",
     "react-native-reanimated": ">=4.0.0",
-    "react-native-worklets": ">=0.7.0"
+    "react-native-worklets": ">=0.7.0",
+    "react-native-skia": ">=3.8.0"
   },
   "devDependencies": {
-    "@shopify/react-native-skia": "^2.14.0",
     "@types/react": "^19.1.0",
     "react": "19.3.0",
     "react-native": "0.88.0",
     "react-native-gesture-handler": "~3.3.0",
     "react-native-reanimated": "^4.7.1",
     "react-native-worklets": "^0.13.0",
-    "typescript": "~5.9.0"
+    "typescript": "~5.9.0",
+    "react-native-skia": "3.8.0"
   }
 }
