@@ -1,5 +1,5 @@
 import React, { useCallback, useRef } from 'react';
-import { ScrollView, StyleSheet, Text, View, useWindowDimensions, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
+import { Platform, ScrollView, StyleSheet, Text, View, useWindowDimensions, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import * as Haptics from 'expo-haptics';
 import Animated, { FadeInDown } from 'react-native-reanimated';
@@ -232,7 +232,8 @@ export default function App() {
                   sheetGrabberVisible: true,
                   sheetCornerRadius: 28,
                   sheetExpandsWhenScrolledToEdge: true,
-                  contentStyle: { backgroundColor: theme.sheet },
+                  // Transparent so the sheet's BlurView material shows the home screen through it.
+                  contentStyle: { backgroundColor: Platform.OS === 'ios' ? 'transparent' : theme.sheet },
                 }}
               />
             </Stack.Navigator>

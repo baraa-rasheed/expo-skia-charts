@@ -22,7 +22,7 @@ npx expo run:ios   # or run:android. Skia v3 needs a dev build.
 - **Fear & Greed** (gauge) and **ETH-USD activity** (heatmap) are embedded full width at the bottom with no background card. There is no two-column grid.
 - Blocks fade in one after another (Reanimated `FadeInDown`).
 - Charts stay interactive in place. You can scrub or use the crosshair, tap to select and highlight bars, slices, points, cells and rings, pinch to zoom, use two fingers to pan, and double-tap to reset.
-- Data comes from a seeded PRNG, so a chart and its preview in the sheet always match.
+- Data comes from a seeded PRNG, so charts look the same on every launch.
 
 ## Customize sheet
 
@@ -31,7 +31,7 @@ Each section has a subtle **See All ›** link. You can also tap a watchlist row
 The sheet follows iOS Settings patterns, with inset-grouped sections, native switches, segmented controls, glassy `expo-blur` buttons, SF Symbols (`expo-symbols`) and haptics:
 
 - a header with the chart type, title and a glass **Done** button;
-- a live preview;
+- no preview inside the sheet: the sheet uses a native translucent blur (`expo-blur` `systemChromeMaterialDark` over a transparent `formSheet` on iOS). Edits apply live to the real chart, which stays visible above the sheet;
 - **Appearance**: colour swatches, a **Gradient** segmented control (None / Linear / Radial / Sweep) and an end colour (uses the `gradient` prop);
 - **Interaction** switches per chart type: *Tap to select*, *Pinch to zoom*, *Long-press to scrub* and *Scrubbing / Crosshair*;
 - **Data**: a glass −/+ stepper for the point count, and **Randomize**;
