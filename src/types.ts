@@ -1,4 +1,4 @@
-import type { SkFont } from '@shopify/react-native-skia';
+import type { SkFont } from 'react-native-skia';
 import type { StyleProp, ViewStyle } from 'react-native';
 
 export interface Padding { top: number; right: number; bottom: number; left: number }

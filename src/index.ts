@@ -1,5 +1,5 @@
 // Skia API docs, examples & best practices: https://github.com/wcandillon/react-native-skia
-// (installed from npm as @shopify/react-native-skia)
+// (installed from npm as react-native-skia)
 export * from './types';
 export { LineChart, AreaChart, Sparkline, normalize } from './charts/LineChart';
 export type { LineChartProps, AreaChartProps, SparklineProps, LineSeries } from './charts/LineChart';

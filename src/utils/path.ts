@@ -1,4 +1,4 @@
-import { Skia, type SkPath } from '@shopify/react-native-skia';
+import { Skia, type SkPath } from 'react-native-skia';
 import type { CurveType, Point } from '../types';
 
 type Builder = ReturnType<typeof Skia.PathBuilder.Make>;

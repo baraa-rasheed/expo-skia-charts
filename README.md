@@ -1,6 +1,6 @@
 # expo-skia-charts
 
-GPU-accelerated, animated charts for **React Native & Expo**, drawn with [React Native Skia](https://github.com/wcandillon/react-native-skia) (installed as `@shopify/react-native-skia`) and animated entirely on the UI thread with **Reanimated shared values & worklets**. A modern successor to the unmaintained `@rainbow-me/react-native-animated-charts`, including a familiar `ChartPathProvider` / `ChartPath` / `ChartDot` API.
+GPU-accelerated, animated charts for **React Native & Expo**, drawn with [React Native Skia](https://github.com/wcandillon/react-native-skia) (v3, installed as `react-native-skia`) and animated entirely on the UI thread with **Reanimated shared values & worklets**. A modern successor to the unmaintained `@rainbow-me/react-native-animated-charts`, including a familiar `ChartPathProvider` / `ChartPath` / `ChartDot` API.
 
 - 🚀 60fps: every animation (path morphing, bar growth, arc sweeps, scrubbing) runs in worklets; no JS animation loops
 - 🧩 15+ chart types, all in TypeScript strict mode, `.d.ts` shipped
@@ -10,24 +10,62 @@ GPU-accelerated, animated charts for **React Native & Expo**, drawn with [React 
 ## Install
 
 ```sh
-npx expo install expo-skia-charts @shopify/react-native-skia react-native-reanimated react-native-worklets react-native-gesture-handler
+npx expo install expo-skia-charts react-native-skia expo-build-properties react-native-reanimated react-native-worklets react-native-gesture-handler
 ```
 
 ### Peer dependencies
 
 | Package | Version |
 | --- | --- |
-| `@shopify/react-native-skia` | `>= 2.0` (tested with 2.14, the Expo SDK 58 version) |
-| `react-native-reanimated` | `>= 3.16` (4.x recommended, plus `react-native-worklets`) |
+| `react-native-skia` | `>= 3.8.0` (tested with 3.8.0). Skia v3 is published under the unscoped name; `@shopify/react-native-skia` stops at 2.14 |
+| `react-native-reanimated` | `>= 4.0` (required by Skia v3) |
+| `react-native-worklets` | `>= 0.7` (required by Skia v3) |
 | `react-native-gesture-handler` | `>= 2.20` |
 | `react`, `react-native` | any version supported by the above |
+
+Skia v3 renders with **Graphite** (Metal on Apple, Vulkan on Android) and therefore needs a **development build** (Expo Go ships Skia v2), **Android minSdk 26 + Vulkan 1.1**, and iOS 15.1+ (Expo SDK 58 already requires 16.4). Raise the Android minSdk in `app.json`:
+
+```json
+{ "expo": { "plugins": [["expo-build-properties", { "android": { "minSdkVersion": 26 } }]] } }
+```
+
+Do not install `@shopify/react-native-skia` alongside `react-native-skia` (same native module). Need Expo Go, Android TV, or pre-Vulkan devices? Stay on `expo-skia-charts@0.1.x` with Skia 2.x.
 
 Wrap your app in `GestureHandlerRootView`. In Expo SDK 54+ `babel-preset-expo` sets up the worklets Babel plugin for you.
 
 
 ## Skia reference
 
-The npm package [`@shopify/react-native-skia`](https://www.npmjs.com/package/@shopify/react-native-skia) is used **only for installation**. For Skia API docs, examples, and best practices, the source of truth for this project is the GitHub repo **[https://github.com/wcandillon/react-native-skia](https://github.com/wcandillon/react-native-skia)** (see its `apps/docs` and `apps/example` folders). Implementation follows that repo's guidance: drive animations with Reanimated shared values passed directly as Skia props (no React re-renders per frame), build paths with `Skia.Path` / path builders inside worklets, and keep one `<Canvas>` per chart.
+The npm package [`react-native-skia`](https://www.npmjs.com/package/react-native-skia) is used **only for installation**. For Skia API docs, examples, and best practices, the source of truth for this project is the GitHub repo **[https://github.com/wcandillon/react-native-skia](https://github.com/wcandillon/react-native-skia)** (see its `apps/docs` and `apps/example` folders). Implementation follows that repo's guidance: drive animations with Reanimated shared values passed directly as Skia props (no React re-renders per frame), build paths with `Skia.Path` / path builders inside worklets, and keep one `<Canvas>` per chart.
+
+## GPU vs CPU: what runs where (Skia v3)
+
+Skia v3 replaced the Ganesh/OpenGL backend with **Skia Graphite** running on Dawn (Metal on iOS/macOS, Vulkan on Android). Per the [v3 migration guide](https://github.com/wcandillon/react-native-skia/blob/main/apps/docs/docs/getting-started/migration.md) and [v3.8.0 release notes](https://github.com/wcandillon/react-native-skia/releases/tag/v3.8.0), the drawing API is unchanged; what changed is *where* frames are produced: each `<Canvas>` scene is recorded once per React commit and replayed into a Graphite frame by a dedicated native thread pool. The UI thread only applies animated values — it no longer rasterizes.
+
+### Skia features used by expo-skia-charts
+
+| Feature | Used in | Runs on |
+| --- | --- | --- |
+| Path rasterization (`<Path>` fill & stroke, round caps/joins) | Line, StackedArea, Radar, Pie, Gauge, ProgressRings, compat `ChartPath` | **GPU** (Graphite tessellation/MSAA) |
+| Anti-aliasing (default on every paint) | all charts | **GPU** |
+| Primitive shapes (`Rect`, `RoundedRect`, `Circle`, `Line`) | Bar, Candlestick, Heatmap, Scatter, cursors/dots, grid lines | **GPU** |
+| Linear gradient shader (`<LinearGradient>`) | LineChart area fill | **GPU** (fragment shader) |
+| Sweep gradient shader (`<SweepGradient>`) | GaugeChart arc | **GPU** (fragment shader) |
+| Opacity / alpha blending (`opacity`, color alpha, default `srcOver` blend) | Scatter, Heatmap, Candlestick, StackedArea, Radar, ProgressRings, compat `ChartDot` (Reanimated view style, not Skia) | **GPU** (Skia) / RN compositor (compat dot) |
+| Affine transforms (`<Group transform>`) | Radar, StackedArea (draw-in scale) | **GPU** (matrix applied in vertex stage) |
+| Groups / paint inheritance (`<Group>`) | all charts | recorded on CPU, drawn on **GPU** |
+| Text (`<Text>` with `useFont`) | axis labels, Gauge value | glyph shaping/atlas on **CPU**, glyph quads drawn on **GPU** |
+| Animated props (Reanimated shared values → Skia props) | all charts (draw-in, morph, scrub) | value computed in a **UI-thread worklet (CPU)**; frame replayed on **GPU** without React re-render |
+| Path building (`Skia.PathBuilder.Make()` in `useDerivedValue`) | line/area/radar/pie geometry, interpolation | **CPU** (worklet on UI thread) |
+| Gestures (`react-native-gesture-handler` `Gesture.Pan`) | Line & Candlestick scrubbing, compat | **CPU** (UI thread worklet) |
+| Data scaling, monotone cubic interpolation, min/max | `utils/` | **CPU** (JS / worklet) |
+
+### Skia v3 GPU features *not* currently used (available for future work)
+
+Blur & mask filters (`BlurMask`, `Blur`), image filters (`Shadow`, `DropShadow`, `Morphology`, `DisplacementMap`), color filters (`ColorMatrix`, `Lerp`, `MakeLuma`), custom blend modes (`blendMode`), runtime shaders (`<Shader>` / `Skia.RuntimeEffect`, SkSL), radial/two-point-conical gradients, path effects (`DashPathEffect`, `CornerPathEffect`, `DiscretePathEffect`), clipping (`<Group clip>`), save-layers (`<Group layer>`), backdrop filters, `<Atlas>` instanced sprites, offscreen GPU surfaces (`Skia.Surface.MakeOffscreen`, texture hooks — in v3 GPU images can be shared across threads), `highBitDepth` (now also on Android, 10-bit), `SkiaGraphiteView`, and WebGPU interop. None are required for the current charts; they are listed so contributors know what is GPU-accelerated in v3 before reaching for a CPU fallback.
+
+### Not used and removed in v3
+`Canvas` props `onSize`, `opaque`, `colorSpace`, `debug`, `androidWarmup`, `makeImageSnapshotAsync`, `useVideo`, `SkiaPictureView`, and the `Make*` factory renames from 3.8.0 (e.g. `Skia.Image.MakeFromEncoded`) — this library uses none of them, so the v3 bump required only the package rename.
 
 ## Quick start
 
@@ -40,7 +78,7 @@ import { LineChart } from 'expo-skia-charts';
 All charts share these props: `width`, `height`, `padding?`, `style?`, `backgroundColor?`, `animation?: { duration?, delay? }`, and `font?` (an `SkFont` from Skia's `useFont`; axis labels only render when you pass one).
 
 ```tsx
-import { useFont } from '@shopify/react-native-skia';
+import { useFont } from 'react-native-skia';
 const font = useFont(require('./assets/Inter.ttf'), 11);
 <BarChart font={font} ... />
 ```
