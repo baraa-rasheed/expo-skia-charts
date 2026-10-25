@@ -6,7 +6,21 @@
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-    "ios": { "bundleIdentifier": "dev.baraa.skiacharts.example" },
-    "android": { "package": "dev.baraa.skiacharts.example" }
+    "ios": {
+      "bundleIdentifier": "dev.baraa.skiacharts.example"
+    },
+    "android": {
+      "package": "dev.baraa.skiacharts.example"
+    },
+    "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "minSdkVersion": 26
+          }
+        }
+      ]
+    ]
   }
 }
