@@ -14,7 +14,9 @@ export interface StackedAreaChartProps extends BaseChartProps {
   curve?: CurveType;
   /** Normalise each x to 100%. */
   percent?: boolean;
+  /** Draw horizontal grid lines (axis labels also need `font`). */
   showGrid?: boolean;
+  /** Formats y-axis labels, e.g. `(v) => "$" + v.toFixed(0)`. */
   formatY?: (v: number) => string;
   fillOpacity?: number;
 }
