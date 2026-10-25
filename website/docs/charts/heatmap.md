@@ -13,7 +13,7 @@ Grid of cells coloured by value.
 ## Usage
 
 ```tsx
-import { HeatmapChart } from 'expo-skia-charts';
+import { HeatmapChart } from 'react-native-skia-chart';
 
 <HeatmapChart width={w} height={160} data={matrix} colors={['#1E1E2A', '#7C5CFF']} />
 ```

@@ -13,7 +13,7 @@ Financial OHLC data with a crosshair.
 ## Usage
 
 ```tsx
-import { CandlestickChart, OHLCChart } from 'expo-skia-charts';
+import { CandlestickChart, OHLCChart } from 'react-native-skia-chart';
 
 <CandlestickChart width={w} height={240} data={candles} interactive />
 <OHLCChart width={w} height={240} data={candles} />
