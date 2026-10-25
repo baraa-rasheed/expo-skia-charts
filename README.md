@@ -96,6 +96,20 @@ A stocks-style home screen with every chart embedded full width. Tap **See All**
 cd example && npm install && npx expo run:ios   # or run:android
 ```
 
+## Releasing to npm
+
+Publishing is automated by [`.github/workflows/publish-npm.yml`](.github/workflows/publish-npm.yml). It runs when a GitHub Release is published or a `v*` tag is pushed, then type-checks, builds and runs `npm publish --access public`.
+
+One-time setup:
+
+1. On npmjs.com go to **Access Tokens → Generate New Token → Granular Access Token**. Give it **Read and write** permission on packages (scope it to `react-native-skia-chart` once the package exists, or all packages for the first publish) and tick **Bypass two-factor authentication**.
+2. In this repo go to **Settings → Secrets and variables → Actions → New repository secret**. Name it `NPM_TOKEN` and paste the token.
+
+Each release:
+
+1. Bump `version` in `package.json` (for example `npm version patch`) and push to `main`.
+2. Create a GitHub Release (or push a tag) named `v` + that version, e.g. `v0.2.0`. The workflow fails if the tag and `package.json` disagree, and skips versions already on npm.
+
 ## License
 
 MIT
