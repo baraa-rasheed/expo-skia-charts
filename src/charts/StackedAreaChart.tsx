@@ -20,7 +20,7 @@ export interface StackedAreaChartProps extends BaseChartProps {
 }
 
 /** Stacked (or 100%-stacked) area chart. Bands grow up from the baseline. */
-export const StackedAreaChart = ({ effects, width, height, style, series, curve = 'monotone', percent = false, showGrid = true, formatY, fillOpacity = 0.85, font, animation, backgroundColor, padding }: StackedAreaChartProps) => {
+export const StackedAreaChart = ({ effects, gradient, width, height, style, series, curve = 'monotone', percent = false, showGrid = true, formatY, fillOpacity = 0.85, font, animation, backgroundColor, padding }: StackedAreaChartProps) => {
   const pad = resolvePadding(padding, 16);
   if (font) pad.left = Math.max(pad.left, 36);
   const { bands, yS, ticks } = useMemo(() => {
@@ -43,8 +43,8 @@ export const StackedAreaChart = ({ effects, width, height, style, series, curve 
   const transform = useDerivedValue(() => [{ translateY: base }, { scaleY: progress.value }, { translateY: -base }]);
   return (
     <Canvas style={[{ width, height, backgroundColor }, style]}>
-      <EffectsLayer effects={effects} width={width} height={height}>
       {showGrid ? <Grid width={width} height={height} padding={pad} yTicks={ticks} yScale={yS} font={font} formatY={formatY ?? (percent ? (v) => `${v}%` : undefined)} /> : null}
+      <EffectsLayer effects={effects} gradient={gradient} width={width} height={height}>
       <Group transform={transform}>
         {bands.map((b, i) => <Path key={i} path={b.path} color={b.color} opacity={fillOpacity} />)}
       </Group>
