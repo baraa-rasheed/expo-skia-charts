@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Canvas, Group, Path, Text, type SkFont } from '@shopify/react-native-skia';
+import { Canvas, Group, Path, Text, type SkFont } from 'react-native-skia';
 import { useDerivedValue, type SharedValue } from 'react-native-reanimated';
 import type { BaseChartProps, PieSlice } from '../types';
 import { slicePath } from '../utils/path';

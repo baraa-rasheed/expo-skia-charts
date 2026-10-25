@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Canvas, Group, Path } from '@shopify/react-native-skia';
+import { Canvas, Group, Path } from 'react-native-skia';
 import { Easing, useSharedValue, withDelay, withTiming } from 'react-native-reanimated';
 import type { BaseChartProps, RingData } from '../types';
 import { arcPath } from '../utils/path';

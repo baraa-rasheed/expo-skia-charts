@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { View } from 'react-native';
-import { Canvas, Circle, Group, Line, LinearGradient, Path, vec } from '@shopify/react-native-skia';
+import { Canvas, Circle, Group, Line, LinearGradient, Path, vec } from 'react-native-skia';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { runOnJS, useAnimatedReaction, useDerivedValue, useSharedValue, withTiming } from 'react-native-reanimated';
 import type { BaseChartProps, CurveType, DataPoint, Point } from '../types';
@@ -64,6 +64,7 @@ const SeriesPath = ({ pts, baseline, curve, color, strokeWidth, fill, fillOpacit
     <Group>
       {fill ? (
         <Path path={morphArea} opacity={areaOpacity}>
+          {/* GPU: gradient evaluated in a Graphite fragment shader (Skia v3). */}
           <LinearGradient start={vec(0, top)} end={vec(0, baseline)} colors={[color, `${color}00`]} />
         </Path>
       ) : null}
