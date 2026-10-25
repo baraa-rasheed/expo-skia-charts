@@ -3,7 +3,7 @@ id: example-app
 title: Example app
 ---
 
-`example/` is an Expo SDK 58 app (dark theme) designed like a native stocks app.
+`example/` is an Expo SDK 58 app styled like a production iOS stocks app, with a dark **aurora** look.
 
 ```sh
 cd example
@@ -13,25 +13,29 @@ npx expo run:ios   # or run:android. Skia v3 needs a dev build.
 
 ## Home
 
-- One screen, **Charts**, on a native stack with an iOS large title and a blurred header.
-- A **Watchlist** shows full-width cards: line, area, candlestick, bar, stacked bar, stacked area, histogram, scatter, bubble and heatmap.
-- A **Breakdown** grid shows compact cards: pie/donut, radar, gauge and progress rings.
-- Each card has its own chart type, a headline value, a green or red delta pill, and a **Customize ›** link. Charts stay interactive inside the cards (scrubbing, crosshair).
-- Data comes from a seeded PRNG, so a card and its preview in the sheet always match.
+- One screen, **Stocks**, on a native stack. The large title and header are transparent over an animated aurora (blurred Skia circles driven by `useClock`). The header blurs once the title collapses.
+- **Portfolio**: total balance and today's change, then a hero **AAPL** line chart with a native segmented range control (1D / 1W / 1M / 6M / 1Y). The range changes the number of points.
+- **Watchlist**: rows with a ticker and name, a `Sparkline`, the price and a green or red change badge.
+- **Markets** and **Insights**: full-width charts embedded straight into the page with no background cards, separated by hairlines. They include BTC-USD candlesticks, NVDA area, MSFT volume bars, portfolio allocation (stacked area), AMZN revenue (stacked bar), SPY returns (histogram) and ETH-USD activity (heatmap).
+- **Discover**: a staggered two-column masonry grid with Holdings (donut), Risk / Return (scatter), GOOGL factors (radar), Fear & Greed (gauge), Goals (rings) and Mega caps (bubble).
+- Blocks fade in one after another (Reanimated `FadeInDown`).
+- Charts stay interactive in place (scrubbing, crosshair).
+- Data comes from a seeded PRNG, so a chart and its preview in the sheet always match.
 
 ## Customize sheet
 
-Tap a card or **Customize** to open a native bottom sheet (`presentation: 'formSheet'`, detents 60% / 100%, grabber). The home page scrolls smoothly so the chart you are editing sits centred in the area still visible above the sheet.
+Each section has a subtle **See All ›** link. You can also tap a watchlist row or a tile title. Either one opens a native bottom sheet (`presentation: 'formSheet'`, detents 60% / 100%, grabber). The home page scrolls smoothly so the chart you are editing sits centred in the area still visible above the sheet.
 
-The sheet contains:
+The sheet follows iOS Settings patterns, with inset-grouped sections, native switches, segmented controls, glassy `expo-blur` buttons, SF Symbols (`expo-symbols`) and haptics:
+
+- a header with the chart type, title and a glass **Done** button;
 - a live preview;
-- **Colour**;
-- **Data**: −/+ point count and **Randomize**;
-- **Gradient**: none, linear, radial or sweep, plus an end colour (uses the `gradient` prop);
-- chart options such as grid, smooth curve, scrubbing, horizontal, 100% stacked, donut, needle and OHLC bars;
-- **GPU effects**: drop shadow, neon glow, SkSL shader and colour filter;
-- **Reset to defaults**.
+- **Appearance**: colour swatches, a **Gradient** segmented control (None / Linear / Radial / Sweep) and an end colour (uses the `gradient` prop);
+- **Data**: a glass −/+ stepper for the point count, and **Randomize**;
+- **Options**: chart-specific switches such as grid, smooth curve, scrubbing, horizontal, 100% stacked, donut, needle and OHLC bars;
+- **GPU Effects**: drop shadow, neon glow, an SkSL shader segment control and a colour filter segment control;
+- **Reset to Defaults**.
 
-Edits apply live to the card behind the sheet. On Android, `formSheet` is presented as a modal.
+Edits apply live to the chart behind the sheet. On Android, `formSheet` is presented as a modal, and blur falls back to a translucent fill.
 
 The app resolves the library from `../src` via `metro.config.js`, so edits hot-reload.

@@ -58,8 +58,11 @@ export interface Summary { value: string; delta?: number; caption: string }
 interface RenderArgs { cfg: ChartConfig; w: number; h: number; effects: ChartEffects; gradient?: ChartGradient }
 export interface ChartDef {
   id: string;
+  /** Ticker or realistic label shown on the home list. */
   title: string;
   subtitle: string;
+  /** Chart type, shown in the customise sheet. */
+  kind: string;
   unit: string;
   min: number;
   max: number;
@@ -79,7 +82,7 @@ const flag = (cfg: ChartConfig, k: FlagKey) => cfg.flags[k] ?? false;
 
 export const CHARTS: ChartDef[] = [
   {
-    id: 'line', title: 'Line', subtitle: 'ACME · scrub to inspect', unit: 'points', min: 5, max: 150, step: 5, initial: 40,
+    id: 'line', title: 'AAPL', subtitle: 'Apple Inc.', kind: 'Line', unit: 'points', min: 5, max: 150, step: 5, initial: 40,
     flags: [{ key: 'grid', label: 'Grid', initial: false }, { key: 'smooth', label: 'Smooth curve', initial: true }, { key: 'interactive', label: 'Scrubbing', initial: true }],
     build: (cfg) => {
       const d = walk(rngFor('line', cfg), cfg.count);
@@ -93,7 +96,7 @@ export const CHARTS: ChartDef[] = [
     },
   },
   {
-    id: 'area', title: 'Area', subtitle: 'Portfolio · gradient fill', unit: 'points', min: 5, max: 150, step: 5, initial: 30,
+    id: 'area', title: 'NVDA', subtitle: 'NVIDIA Corp.', kind: 'Area', unit: 'points', min: 5, max: 150, step: 5, initial: 30,
     flags: [{ key: 'grid', label: 'Grid', initial: false }, { key: 'interactive', label: 'Scrubbing', initial: true }],
     build: (cfg) => {
       const d = walk(rngFor('area', cfg), cfg.count, 120, 5);
@@ -104,7 +107,7 @@ export const CHARTS: ChartDef[] = [
     },
   },
   {
-    id: 'candle', title: 'Candlestick', subtitle: 'BTC-USD · OHLC', unit: 'candles', min: 10, max: 120, step: 10, initial: 30,
+    id: 'candle', title: 'BTC-USD', subtitle: 'Bitcoin · 1H candles', kind: 'Candlestick', unit: 'candles', min: 10, max: 120, step: 10, initial: 30,
     flags: [{ key: 'ohlc', label: 'OHLC bars', initial: false }, { key: 'grid', label: 'Grid', initial: false }, { key: 'interactive', label: 'Crosshair', initial: true }],
     build: (cfg) => {
       const d = candlesOf(rngFor('candle', cfg), cfg.count);
@@ -117,7 +120,7 @@ export const CHARTS: ChartDef[] = [
     },
   },
   {
-    id: 'bar', title: 'Bar', subtitle: 'Daily volume', unit: 'bars', min: 3, max: 30, step: 1, initial: 12,
+    id: 'bar', title: 'MSFT', subtitle: 'Microsoft · Daily volume', kind: 'Bar', unit: 'bars', min: 3, max: 30, step: 1, initial: 12,
     flags: [{ key: 'horizontal', label: 'Horizontal', initial: false }, { key: 'grid', label: 'Grid', initial: false }],
     build: (cfg) => {
       const r = rngFor('bar', cfg);
@@ -130,7 +133,7 @@ export const CHARTS: ChartDef[] = [
     },
   },
   {
-    id: 'stackedBar', title: 'Stacked bar', subtitle: 'Revenue by segment', unit: 'series', min: 1, max: 6, step: 1, initial: 3,
+    id: 'stackedBar', title: 'AMZN', subtitle: 'Revenue by segment', kind: 'Stacked bar', unit: 'series', min: 1, max: 6, step: 1, initial: 3,
     flags: [{ key: 'grid', label: 'Grid', initial: false }],
     build: (cfg) => {
       const r = rngFor('stackedBar', cfg);
@@ -142,7 +145,7 @@ export const CHARTS: ChartDef[] = [
     },
   },
   {
-    id: 'stackedArea', title: 'Stacked area', subtitle: 'Allocation over time', unit: 'series', min: 1, max: 6, step: 1, initial: 3,
+    id: 'stackedArea', title: 'My Portfolio', subtitle: 'Allocation over time', kind: 'Stacked area', unit: 'series', min: 1, max: 6, step: 1, initial: 3,
     flags: [{ key: 'percent', label: '100% stacked', initial: false }, { key: 'grid', label: 'Grid', initial: false }],
     build: (cfg) => {
       const r = rngFor('stackedArea', cfg);
@@ -154,7 +157,7 @@ export const CHARTS: ChartDef[] = [
     },
   },
   {
-    id: 'histogram', title: 'Histogram', subtitle: 'Return distribution', unit: 'bins', min: 5, max: 60, step: 5, initial: 20,
+    id: 'histogram', title: 'SPY', subtitle: 'S&P 500 daily returns', kind: 'Histogram', unit: 'bins', min: 5, max: 60, step: 5, initial: 20,
     flags: [{ key: 'grid', label: 'Grid', initial: false }],
     build: (cfg) => {
       const r = rngFor('histogram', cfg);
@@ -167,7 +170,7 @@ export const CHARTS: ChartDef[] = [
     },
   },
   {
-    id: 'pie', title: 'Pie / Donut', subtitle: 'Holdings breakdown', unit: 'slices', min: 2, max: 6, step: 1, initial: 4,
+    id: 'pie', title: 'Holdings', subtitle: 'Portfolio breakdown', kind: 'Donut', unit: 'slices', min: 2, max: 6, step: 1, initial: 4,
     flags: [{ key: 'donut', label: 'Donut', initial: true }],
     build: (cfg) => {
       const r = rngFor('pie', cfg);
@@ -182,7 +185,7 @@ export const CHARTS: ChartDef[] = [
     },
   },
   {
-    id: 'scatter', title: 'Scatter', subtitle: 'Risk vs return', unit: 'points', min: 10, max: 400, step: 20, initial: 80,
+    id: 'scatter', title: 'Risk / Return', subtitle: 'Tech sector, 1Y', kind: 'Scatter', unit: 'points', min: 10, max: 400, step: 20, initial: 80,
     flags: [{ key: 'grid', label: 'Grid', initial: false }],
     build: (cfg) => {
       const r = rngFor('scatter', cfg);
@@ -194,7 +197,7 @@ export const CHARTS: ChartDef[] = [
     },
   },
   {
-    id: 'bubble', title: 'Bubble', subtitle: 'Market cap · P/E · growth', unit: 'bubbles', min: 3, max: 60, step: 3, initial: 15,
+    id: 'bubble', title: 'Mega caps', subtitle: 'Market cap × P/E', kind: 'Bubble', unit: 'bubbles', min: 3, max: 60, step: 3, initial: 15,
     flags: [{ key: 'grid', label: 'Grid', initial: false }],
     build: (cfg) => {
       const r = rngFor('bubble', cfg);
@@ -206,7 +209,7 @@ export const CHARTS: ChartDef[] = [
     },
   },
   {
-    id: 'radar', title: 'Radar', subtitle: 'Fund factor exposure', unit: 'axes', min: 3, max: 10, step: 1, initial: 6,
+    id: 'radar', title: 'GOOGL', subtitle: 'Factor exposure', kind: 'Radar', unit: 'axes', min: 3, max: 10, step: 1, initial: 6,
     flags: [],
     build: (cfg) => {
       const axes = ['Value', 'Growth', 'Momentum', 'Quality', 'Size', 'Yield', 'Vol', 'Beta', 'ESG', 'Liquidity'].slice(0, cfg.count);
@@ -219,7 +222,7 @@ export const CHARTS: ChartDef[] = [
     },
   },
   {
-    id: 'heatmap', title: 'Heatmap', subtitle: 'Trading activity', unit: 'weeks', min: 5, max: 40, step: 5, initial: 20,
+    id: 'heatmap', title: 'ETH-USD', subtitle: 'On-chain activity', kind: 'Heatmap', unit: 'weeks', min: 5, max: 40, step: 5, initial: 20,
     flags: [],
     build: (cfg) => {
       const r = rngFor('heatmap', cfg);
@@ -231,7 +234,7 @@ export const CHARTS: ChartDef[] = [
     },
   },
   {
-    id: 'gauge', title: 'Gauge', subtitle: 'Fear & greed index', unit: 'value', min: 0, max: 100, step: 10, initial: 60,
+    id: 'gauge', title: 'Fear & Greed', subtitle: 'CNN market sentiment', kind: 'Gauge', unit: 'value', min: 0, max: 100, step: 10, initial: 60,
     flags: [{ key: 'needle', label: 'Needle', initial: true }],
     build: (cfg) => ({
       summary: { value: String(cfg.count), caption: cfg.count >= 55 ? 'Greed' : cfg.count <= 45 ? 'Fear' : 'Neutral' },
@@ -239,7 +242,7 @@ export const CHARTS: ChartDef[] = [
     }),
   },
   {
-    id: 'rings', title: 'Progress rings', subtitle: 'Savings goals', unit: 'rings', min: 1, max: 6, step: 1, initial: 3,
+    id: 'rings', title: 'Goals', subtitle: 'Savings targets', kind: 'Rings', unit: 'rings', min: 1, max: 6, step: 1, initial: 3,
     flags: [],
     build: (cfg) => {
       const r = rngFor('rings', cfg);
