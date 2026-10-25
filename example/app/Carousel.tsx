@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import Animated, {
   Extrapolation, interpolate, useAnimatedRef, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue,
-  scrollTo, runOnUI, type SharedValue,
+  scrollTo, runOnUI, FadeInRight, type SharedValue,
 } from 'react-native-reanimated';
 import { scheduleOnRN } from 'react-native-worklets';
 import { EmbeddedChart } from './ChartCard';
@@ -111,4 +111,46 @@ export const Carousel = React.forwardRef<CarouselHandle, {
 const styles = StyleSheet.create({
   dots: { flexDirection: 'row', justifyContent: 'center', gap: 6, marginTop: 2, marginBottom: 8 },
   dot: { height: 6, borderRadius: 3, backgroundColor: theme.accent },
+});
+
+const StripItem = ({ index, x, step, children }: { index: number; x: SharedValue<number>; step: number; children: React.ReactNode }) => {
+  const style = useAnimatedStyle(() => {
+    const d = Math.abs(x.value / step - index);
+    return {
+      opacity: interpolate(d, [0, 1.2], [1, 0.45], Extrapolation.CLAMP),
+      transform: [{ scale: interpolate(d, [0, 1.2], [1, 0.92], Extrapolation.CLAMP) }],
+    };
+  });
+  return <Animated.View style={style}>{children}</Animated.View>;
+};
+
+/**
+ * Horizontal "peek" strip (like Stocks' Top Movers): items narrower than the screen so the next one peeks in,
+ * snapping per item with native deceleration; the focused item is full-size, neighbours recede.
+ */
+export const Strip = React.forwardRef<CarouselHandle, {
+  ids: readonly string[]; itemWidth: number; gap: number; inset: number;
+  renderItem: (id: string, index: number) => React.ReactNode;
+}>(function Strip({ ids, itemWidth, gap, inset, renderItem }, ref) {
+  const scrollRef = useAnimatedRef<Animated.ScrollView>();
+  const x = useSharedValue(0);
+  const step = itemWidth + gap;
+  const handler = useAnimatedScrollHandler({ onScroll: (e) => { x.value = e.contentOffset.x; } });
+  React.useImperativeHandle(ref, () => ({
+    scrollToId: (id: string) => {
+      const i = ids.indexOf(id);
+      if (i >= 0) runOnUI((to: number) => { 'worklet'; scrollTo(scrollRef, to, 0, true); })(i * step);
+    },
+  }), [ids, step, scrollRef]);
+  return (
+    <Animated.ScrollView ref={scrollRef} horizontal showsHorizontalScrollIndicator={false} onScroll={handler} scrollEventThrottle={16}
+      snapToInterval={step} decelerationRate="fast" disableIntervalMomentum
+      contentContainerStyle={{ paddingHorizontal: inset, gap }}>
+      {ids.map((id, i) => (
+        <Animated.View key={id} entering={FadeInRight.delay(120 + i * 80).duration(500)} style={{ width: itemWidth }}>
+          <StripItem index={i} x={x} step={step}>{renderItem(id, i)}</StripItem>
+        </Animated.View>
+      ))}
+    </Animated.ScrollView>
+  );
 });

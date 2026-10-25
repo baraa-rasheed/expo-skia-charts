@@ -13,7 +13,7 @@ import { ChartView, EmbeddedChart, SeeAll, Tile, WatchRow } from './app/ChartCar
 import { CustomizeSheet } from './app/CustomizeSheet';
 import { ChartStoreProvider, useChartStore } from './app/store';
 import { theme } from './app/theme';
-import { Carousel, type CarouselHandle } from './app/Carousel';
+import { Carousel, Strip, type CarouselHandle } from './app/Carousel';
 import { Segmented } from './app/Segmented';
 
 export type RootStackParamList = { Home: undefined; Customize: { id: string } };
@@ -38,20 +38,19 @@ const WATCHLIST = [
   { ticker: 'BTC-USD', name: 'Bitcoin', id: 'candle', seed: 5 },
   { ticker: 'MSFT', name: 'Microsoft Corp.', id: 'bar', seed: 42 },
 ] as const;
-/** Staggered (masonry) grid: two columns with different tile heights, as ratios of the column width. */
-const MASONRY: readonly (readonly [string, number])[][] = [
-  [['pie', 1.15], ['scatter', 0.8], ['radar', 1.0]],
-  [['gauge', 0.8], ['rings', 1.05], ['bubble', 1.1]],
-];
+/** Horizontal peek strip ("Discover"): compact charts, the next one peeking in from the right. */
+const STRIP = ['rings', 'radar', 'scatter', 'bubble'] as const;
 /** Swipeable parallax carousels (section → chart ids). */
 const CAROUSELS = {
   markets: ['candle', 'area', 'bar'],
   insights: ['stackedArea', 'stackedBar', 'histogram'],
 } as const;
 type CarouselKey = keyof typeof CAROUSELS;
-const WIDE_BOTTOM = ['heatmap'];
+const WIDE_MIDDLE = ['pie'];
+const WIDE_BOTTOM = ['gauge', 'heatmap'];
 const carouselOf = (id: string): CarouselKey | undefined =>
   (Object.keys(CAROUSELS) as CarouselKey[]).find((k) => (CAROUSELS[k] as readonly string[]).includes(id));
+const inStrip = (id: string) => (STRIP as readonly string[]).includes(id);
 const byId = (id: string): ChartDef | undefined => CHARTS.find((d) => d.id === id);
 
 type ViewRef = React.ComponentRef<typeof View>;
@@ -73,8 +72,8 @@ function HomeScreen({ navigation }: NativeStackScreenProps<RootStackParamList, '
   const focused = useIsFocused();
   const onScroll = useCallback((e: NativeSyntheticEvent<NativeScrollEvent>) => { offset.current = e.nativeEvent.contentOffset.y; }, []);
   const full = width - PAD * 2;
-  const colGap = 16;
-  const col = (full - colGap) / 2;
+  const stripW = Math.round(width * 0.62);
+  const strip = useRef<CarouselHandle>(null);
 
   /**
    * Opens the sheet and, in the same frame, smoothly scrolls the chart being edited into the strip of
@@ -85,7 +84,8 @@ function HomeScreen({ navigation }: NativeStackScreenProps<RootStackParamList, '
     // Charts inside a carousel: swipe the carousel to that page too, then scroll the carousel into view.
     const ck = carouselOf(id);
     if (ck) carousels.current.get(ck)?.scrollToId(id);
-    nodes.current.get(ck ?? id)?.measureInWindow((_x: number, y: number, _w: number, h: number) => {
+    if (inStrip(id)) strip.current?.scrollToId(id);
+    nodes.current.get(ck ?? (inStrip(id) ? 'discover' : id))?.measureInWindow((_x: number, y: number, _w: number, h: number) => {
       const top = insets.top + BAR;
       const visible = height * (1 - SHEET_DETENT) - top;
       const desired = top + Math.max(8, (visible - h) / 2);
@@ -167,22 +167,21 @@ function HomeScreen({ navigation }: NativeStackScreenProps<RootStackParamList, '
 
 {carousel('markets', 'Markets', 'Swipe to switch')}
 
+        <Text style={[styles.section, styles.sectionGap]}>Breakdown</Text>
+        {WIDE_MIDDLE.map((id) => wide(id))}
+
         <Stagger i={k++}>
-          <Text style={[styles.section, styles.sectionGap]}>Discover</Text>
-          <View style={styles.masonry}>
-            {MASONRY.map((column, c) => (
-              <View key={c} style={[styles.column, { width: col }]}>
-                {column.map(([id, ratio]) => {
-                  const def = byId(id);
-                  const cfg = configs[id];
-                  return def && cfg ? (
-                    <View key={id} ref={register(id)} collapsable={false}>
-                      <Tile def={def} cfg={cfg} width={col} height={col * ratio + 64} onOpen={() => open(id)} />
-                    </View>
-                  ) : null;
-                })}
-              </View>
-            ))}
+          <View style={styles.carouselHead}>
+            <Text style={styles.section}>Discover</Text>
+            <Text style={styles.sub}>Analytics</Text>
+          </View>
+          <View ref={register('discover')} collapsable={false} style={[styles.divider, styles.bleed]}>
+            <Strip ref={strip} ids={STRIP} itemWidth={stripW} gap={16} inset={PAD}
+              renderItem={(id) => {
+                const def = byId(id);
+                const cfg = configs[id];
+                return def && cfg ? <Tile def={def} cfg={cfg} width={stripW} height={stripW * 0.8 + 64} onOpen={() => open(id)} /> : null;
+              }} />
           </View>
         </Stagger>
 
@@ -259,8 +258,6 @@ const styles = StyleSheet.create({
   section: { color: theme.text, fontSize: 24, fontWeight: '800', letterSpacing: -0.4 },
   sectionGap: { marginTop: 30, marginBottom: 2 },
   divider: { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: theme.separator },
-  masonry: { flexDirection: 'row', justifyContent: 'space-between' },
-  column: { gap: 4 },
   carouselHead: { marginTop: 30, marginBottom: 2, flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between' },
   bleed: { marginHorizontal: -PAD },
   footer: { color: theme.sub, fontSize: 12, textAlign: 'center', marginTop: 28 },
