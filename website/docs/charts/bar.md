@@ -13,7 +13,7 @@ Vertical, horizontal and grouped bars with staggered entry.
 ## Usage
 
 ```tsx
-import { BarChart } from 'expo-skia-charts';
+import { BarChart } from 'react-native-skia-chart';
 
 <BarChart width={w} height={200} data={[4, 8, 6, 9, 3]} labels={['M','T','W','T','F']} radius={6} />
 ```

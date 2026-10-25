@@ -13,7 +13,7 @@ Speedometer-style dial with an animated needle.
 ## Usage
 
 ```tsx
-import { GaugeChart } from 'expo-skia-charts';
+import { GaugeChart } from 'react-native-skia-chart';
 
 <GaugeChart width={260} height={200} value={72} gradient={['#4CD97B', '#FFC048', '#FF5A5F']} />
 ```

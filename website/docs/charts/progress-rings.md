@@ -13,7 +13,7 @@ Concentric activity-style rings.
 ## Usage
 
 ```tsx
-import { ProgressRings } from 'expo-skia-charts';
+import { ProgressRings } from 'react-native-skia-chart';
 
 <ProgressRings width={220} height={220} data={[{ progress: 0.8, color: '#FF6B9A' }, { progress: 0.6, color: '#4CD97B' }]} />
 ```

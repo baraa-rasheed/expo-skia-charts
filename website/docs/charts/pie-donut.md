@@ -13,7 +13,7 @@ Pie and donut charts with pad angles and a centre label.
 ## Usage
 
 ```tsx
-import { PieChart, DonutChart } from 'expo-skia-charts';
+import { PieChart, DonutChart } from 'react-native-skia-chart';
 
 <DonutChart width={220} height={220} data={slices} thickness={0.32} padAngle={2} centerLabel="$4.2k" />
 ```
