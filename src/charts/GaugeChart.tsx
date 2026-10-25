@@ -13,6 +13,7 @@ export interface GaugeChartProps extends Omit<BaseChartProps, 'padding' | 'gradi
   /** Total sweep of the dial in degrees (default 240). */
   sweep?: number;
   thickness?: number;
+  /** Primary mark colour (hex). */
   color?: string;
   /**
    * Gradient along the arc (overrides `color`). Pass colour stops, or a `ChartGradient` to also set `positions`.

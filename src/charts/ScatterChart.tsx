@@ -15,10 +15,13 @@ const Dot = ({ x, y, r, color, opacity, progress, delay }: { x: number; y: numbe
 
 export interface ScatterChartProps extends BaseChartProps {
   data: ScatterPoint[];
+  /** Primary mark colour (hex). */
   color?: string;
   radius?: number;
   opacity?: number;
+  /** Draw horizontal grid lines (axis labels also need `font`). */
   showGrid?: boolean;
+  /** Formats y-axis labels, e.g. `(v) => "$" + v.toFixed(0)`. */
   formatY?: (v: number) => string;
 }
 
@@ -29,11 +32,14 @@ export const ScatterChart = ({ data, color = '#0984E3', radius = 4, opacity = 0.
 
 export interface BubbleChartProps extends BaseChartProps {
   data: BubblePoint[];
+  /** Primary mark colour (hex). */
   color?: string;
   minRadius?: number;
   maxRadius?: number;
   opacity?: number;
+  /** Draw horizontal grid lines (axis labels also need `font`). */
   showGrid?: boolean;
+  /** Formats y-axis labels, e.g. `(v) => "$" + v.toFixed(0)`. */
   formatY?: (v: number) => string;
 }
 

@@ -8,9 +8,11 @@ export interface GridProps {
   padding: Padding;
   yTicks: number[];
   yScale: (v: number) => number;
+  /** Grid line colour. */
   color?: string;
   font?: SkFont | null;
   labelColor?: string;
+  /** Formats y-axis labels, e.g. `(v) => "$" + v.toFixed(0)`. */
   formatY?: (v: number) => string;
   xLabels?: { x: number; label: string }[];
 }

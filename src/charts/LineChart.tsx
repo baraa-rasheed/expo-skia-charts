@@ -25,14 +25,17 @@ export interface LineSeries {
 export interface LineChartProps extends BaseChartProps {
   /** Single series shorthand. */
   data?: number[] | DataPoint[];
+  /** Primary mark colour (hex). */
   color?: string;
   strokeWidth?: number;
   /** Multiple series (overrides `data`). */
   series?: LineSeries[];
   curve?: CurveType;
   fill?: boolean;
+  /** Draw horizontal grid lines (axis labels also need `font`). */
   showGrid?: boolean;
   gridTicks?: number;
+  /** Formats y-axis labels, e.g. `(v) => "$" + v.toFixed(0)`. */
   formatY?: (v: number) => string;
   /** Fixed y domain. */
   yDomain?: [number, number];
