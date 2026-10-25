@@ -13,7 +13,7 @@ Scatter with a third dimension mapped to radius.
 ## Usage
 
 ```tsx
-import { BubbleChart } from 'expo-skia-charts';
+import { BubbleChart } from 'react-native-skia-chart';
 
 <BubbleChart width={w} height={240} data={points} maxRadius={18} />
 ```

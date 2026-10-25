@@ -13,7 +13,7 @@ A filled line chart, plus `Sparkline` for inline trends.
 ## Usage
 
 ```tsx
-import { AreaChart, Sparkline } from 'expo-skia-charts';
+import { AreaChart, Sparkline } from 'react-native-skia-chart';
 
 <AreaChart width={w} height={200} data={values} color="#00B894" />
 <Sparkline width={120} height={36} data={values} />

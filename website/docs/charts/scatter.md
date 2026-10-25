@@ -13,7 +13,7 @@ Point clouds.
 ## Usage
 
 ```tsx
-import { ScatterChart } from 'expo-skia-charts';
+import { ScatterChart } from 'react-native-skia-chart';
 
 <ScatterChart width={w} height={220} data={points} radius={3} />
 ```

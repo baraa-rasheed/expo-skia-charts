@@ -13,7 +13,7 @@ Time series with morphing updates and UI-thread scrubbing.
 ## Usage
 
 ```tsx
-import { LineChart } from 'expo-skia-charts';
+import { LineChart } from 'react-native-skia-chart';
 
 <LineChart width={w} height={220} data={values} curve="monotone" interactive onScrub={(p, i) => {}} />
 ```
