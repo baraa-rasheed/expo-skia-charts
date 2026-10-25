@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import type { SkPath } from '@shopify/react-native-skia';
+import type { SkPath } from 'react-native-skia';
 import { Easing, useDerivedValue, useSharedValue, withTiming, type SharedValue } from 'react-native-reanimated';
 
 /**

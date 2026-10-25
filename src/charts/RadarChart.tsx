@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Canvas, Group, Line, Path, Skia, Text, vec } from '@shopify/react-native-skia';
+import { Canvas, Group, Line, Path, Skia, Text, vec } from 'react-native-skia';
 import { useDerivedValue } from 'react-native-reanimated';
 import type { BaseChartProps, RadarSeries } from '../types';
 import { useEntryProgress } from '../hooks/useEntryProgress';

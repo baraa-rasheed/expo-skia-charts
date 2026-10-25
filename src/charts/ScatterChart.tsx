@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Canvas, Circle, Group } from '@shopify/react-native-skia';
+import { Canvas, Circle, Group } from 'react-native-skia';
 import { useDerivedValue, type SharedValue } from 'react-native-reanimated';
 import type { BaseChartProps, BubblePoint, ScatterPoint } from '../types';
 import { resolvePadding } from '../utils/padding';
