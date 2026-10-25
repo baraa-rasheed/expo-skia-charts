@@ -16,17 +16,17 @@ const features = [
 
 export default function Home(): ReactNode {
   return (
-    <Layout title="expo-skia-charts" description="GPU-accelerated animated charts for React Native & Expo">
+    <Layout title="react-native-skia-chart" description="GPU-accelerated animated charts for React Native & Expo">
       <header className={styles.hero}>
         <img src={useBaseUrl('/img/logo.svg')} width={88} height={88} alt="" />
-        <h1>expo-skia-charts</h1>
+        <h1>react-native-skia-chart</h1>
         <p>Charts drawn on the GPU with Skia, animated on the UI thread, with an API your coding agent can't easily get wrong.</p>
         <div className={styles.buttons}>
           <Link className="button button--primary button--lg" to="/docs/intro">Get started</Link>
           <Link className="button button--secondary button--lg" to="/docs/interaction">Interactions</Link>
           <Link className="button button--secondary button--lg" to="/docs/agents">For AI agents</Link>
         </div>
-        <pre className={styles.install}>npx expo install expo-skia-charts react-native-skia react-native-reanimated react-native-worklets react-native-gesture-handler</pre>
+        <pre className={styles.install}>npx expo install react-native-skia-chart react-native-skia react-native-reanimated react-native-worklets react-native-gesture-handler</pre>
       </header>
       <main className={styles.features}>
         {features.map((f) => (

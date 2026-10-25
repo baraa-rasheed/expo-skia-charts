@@ -3,14 +3,14 @@ import type { Config } from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 
 const config: Config = {
-  title: 'expo-skia-charts',
+  title: 'react-native-skia-chart',
   tagline: 'GPU-accelerated, animated charts for React Native & Expo — built on react-native-skia v3.',
   favicon: 'img/favicon.svg',
   future: { v4: true },
   url: 'https://baraa-rasheed.github.io',
-  baseUrl: '/expo-skia-charts/',
+  baseUrl: '/react-native-skia-chart/',
   organizationName: 'baraa-rasheed',
-  projectName: 'expo-skia-charts',
+  projectName: 'react-native-skia-chart',
   trailingSlash: false,
   onBrokenLinks: 'throw',
   i18n: { defaultLocale: 'en', locales: ['en'] },
@@ -20,7 +20,7 @@ const config: Config = {
       {
         docs: {
           sidebarPath: './sidebars.ts',
-          editUrl: 'https://github.com/baraa-rasheed/expo-skia-charts/edit/main/website/',
+          editUrl: 'https://github.com/baraa-rasheed/react-native-skia-chart/edit/main/website/',
         },
         blog: false,
         theme: { customCss: './src/css/custom.css' },
@@ -30,7 +30,7 @@ const config: Config = {
   themeConfig: {
     colorMode: { defaultMode: 'dark', respectPrefersColorScheme: true },
     navbar: {
-      title: 'expo-skia-charts',
+      title: 'react-native-skia-chart',
       logo: { alt: 'logo', src: 'img/logo.svg' },
       items: [
         { type: 'docSidebar', sidebarId: 'docs', position: 'left', label: 'Docs' },
@@ -39,7 +39,7 @@ const config: Config = {
         { to: '/docs/gradients', label: 'Gradients', position: 'left' },
         { to: '/docs/api', label: 'API', position: 'left' },
         { to: '/docs/gpu', label: 'GPU', position: 'left' },
-        { href: 'https://github.com/baraa-rasheed/expo-skia-charts', label: 'GitHub', position: 'right' },
+        { href: 'https://github.com/baraa-rasheed/react-native-skia-chart', label: 'GitHub', position: 'right' },
       ],
     },
     footer: {
