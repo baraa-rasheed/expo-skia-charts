@@ -1,6 +1,6 @@
 # expo-skia-charts
 
-GPU-accelerated, animated charts for **React Native & Expo**, drawn with [`@shopify/react-native-skia`](https://shopify.github.io/react-native-skia/) and animated entirely on the UI thread with **Reanimated shared values & worklets**. A modern successor to the unmaintained `@rainbow-me/react-native-animated-charts`, including a familiar `ChartPathProvider` / `ChartPath` / `ChartDot` API.
+GPU-accelerated, animated charts for **React Native & Expo**, drawn with [React Native Skia](https://github.com/wcandillon/react-native-skia) (installed as `@shopify/react-native-skia`) and animated entirely on the UI thread with **Reanimated shared values & worklets**. A modern successor to the unmaintained `@rainbow-me/react-native-animated-charts`, including a familiar `ChartPathProvider` / `ChartPath` / `ChartDot` API.
 
 - 🚀 60fps: every animation (path morphing, bar growth, arc sweeps, scrubbing) runs in worklets; no JS animation loops
 - 🧩 15+ chart types, all in TypeScript strict mode, `.d.ts` shipped
@@ -23,6 +23,11 @@ npx expo install expo-skia-charts @shopify/react-native-skia react-native-reanim
 | `react`, `react-native` | any version supported by the above |
 
 Wrap your app in `GestureHandlerRootView`. In Expo SDK 54+ `babel-preset-expo` sets up the worklets Babel plugin for you.
+
+
+## Skia reference
+
+The npm package [`@shopify/react-native-skia`](https://www.npmjs.com/package/@shopify/react-native-skia) is used **only for installation**. For Skia API docs, examples, and best practices, the source of truth for this project is the GitHub repo **[https://github.com/wcandillon/react-native-skia](https://github.com/wcandillon/react-native-skia)** (see its `apps/docs` and `apps/example` folders). Implementation follows that repo's guidance: drive animations with Reanimated shared values passed directly as Skia props (no React re-renders per frame), build paths with `Skia.Path` / path builders inside worklets, and keep one `<Canvas>` per chart.
 
 ## Quick start
 
