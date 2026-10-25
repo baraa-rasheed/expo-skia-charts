@@ -35,6 +35,7 @@ const config: Config = {
       items: [
         { type: 'docSidebar', sidebarId: 'docs', position: 'left', label: 'Docs' },
         { to: '/docs/charts', label: 'Charts', position: 'left' },
+        { to: '/docs/agents', label: 'AI agents', position: 'left' },
         { to: '/docs/gradients', label: 'Gradients', position: 'left' },
         { to: '/docs/api', label: 'API', position: 'left' },
         { to: '/docs/gpu', label: 'GPU', position: 'left' },
@@ -44,7 +45,7 @@ const config: Config = {
     footer: {
       style: 'dark',
       links: [
-        { title: 'Docs', items: [{ label: 'Getting started', to: '/docs/intro' }, { label: 'Charts', to: '/docs/charts' }, { label: 'Effects', to: '/docs/effects' }, { label: 'Gradients', to: '/docs/gradients' }] },
+        { title: 'Docs', items: [{ label: 'Getting started', to: '/docs/intro' }, { label: 'Charts', to: '/docs/charts' }, { label: 'AI agents', to: '/docs/agents' }, { label: 'Effects', to: '/docs/effects' }, { label: 'Gradients', to: '/docs/gradients' }] },
         { title: 'Skia', items: [{ label: 'react-native-skia', href: 'https://github.com/wcandillon/react-native-skia' }, { label: 'v3 migration', href: 'https://github.com/wcandillon/react-native-skia/blob/main/apps/docs/docs/getting-started/migration.md' }] },
       ],
       copyright: `MIT © ${new Date().getFullYear()} Baraa Rasheed`,

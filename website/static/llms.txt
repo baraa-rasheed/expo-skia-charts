@@ -1,0 +1,13 @@
+# expo-skia-charts
+
+> GPU-accelerated, animated, fully typed charts for Expo / React Native, built on react-native-skia 3.8.0 and Reanimated 4.
+
+- [Agent guide](https://baraa-rasheed.github.io/expo-skia-charts/docs/agents): rules, component picker, prop patterns, recipes
+- [AGENTS.md](https://github.com/baraa-rasheed/expo-skia-charts/blob/main/AGENTS.md)
+- [Type-checked recipes](https://github.com/baraa-rasheed/expo-skia-charts/blob/main/example/recipes/agent-recipes.tsx)
+- [Charts](https://baraa-rasheed.github.io/expo-skia-charts/docs/charts)
+- [API reference](https://baraa-rasheed.github.io/expo-skia-charts/docs/api)
+- [Gradients](https://baraa-rasheed.github.io/expo-skia-charts/docs/gradients)
+- [GPU effects](https://baraa-rasheed.github.io/expo-skia-charts/docs/effects)
+
+Key rules: import from 'expo-skia-charts'; width/height are required pixel numbers; labels need a Skia `font`; `gradient` and `effects` are optional on every chart; requires a dev build.
