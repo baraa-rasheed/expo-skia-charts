@@ -4,7 +4,7 @@
     "slug": "expo-skia-charts-example",
     "version": "1.0.0",
     "orientation": "portrait",
-    "userInterfaceStyle": "automatic",
+    "userInterfaceStyle": "dark",
     "newArchEnabled": true,
     "ios": {
       "bundleIdentifier": "dev.baraa.skiacharts.example"
@@ -21,6 +21,7 @@
           }
         }
       ]
-    ]
+    ],
+    "backgroundColor": "#0B0B14"
   }
 }

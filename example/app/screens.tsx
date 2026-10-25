@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
-import { Button, Text, View, useWindowDimensions } from 'react-native';
+import { Text, View, useWindowDimensions } from 'react-native';
+import { Button } from '../components/ui';
+import { theme } from './theme';
+import { Playground } from './Playground';
 import {
   AreaChart, BarChart, BubbleChart, CandlestickChart, ChartDot, ChartPath, ChartPathProvider, ChartYLabel, DonutChart, GaugeChart,
   HeatmapChart, Histogram, LineChart, OHLCChart, PieChart, ProgressRing, ProgressRings, RadarChart, ScatterChart, Sparkline,
@@ -8,7 +11,8 @@ import {
 import { candles, randomWalk } from './data';
 
 const useW = () => useWindowDimensions().width - 32;
-const Caption = ({ children }: { children: React.ReactNode }) => <Text style={{ color: '#666' }}>{children}</Text>;
+const glow = { shadow: { dy: 6, blur: 10, color: 'rgba(124,92,255,0.45)' }, clipReveal: 800 } as const;
+const Caption = ({ children }: { children: React.ReactNode }) => <Text style={{ color: theme.sub }}>{children}</Text>;
 
 const LineScreen = () => {
   const w = useW();
@@ -17,7 +21,7 @@ const LineScreen = () => {
   return (
     <View style={{ gap: 12 }}>
       <Caption>{scrub ? `x=${scrub.x}  y=${scrub.y}` : 'Press and drag to scrub'}</Caption>
-      <LineChart width={w} height={220} data={data} onScrub={(p) => setScrub(p)} />
+      <LineChart width={w} height={220} data={data} effects={glow} onScrub={(p) => setScrub(p)} />
       <Button title="Randomize (morph)" onPress={() => setData(randomWalk(40))} />
       <Caption>Multi-series, step curve</Caption>
       <LineChart width={w} height={180} curve="step" series={[{ data: randomWalk(20), color: '#E17055' }, { data: randomWalk(20), color: '#0984E3' }]} />
@@ -32,7 +36,7 @@ const AreaScreen = () => {
   const [data, setData] = useState(() => randomWalk(30));
   return (
     <View style={{ gap: 12 }}>
-      <AreaChart width={w} height={220} data={data} color="#00B894" />
+      <AreaChart width={w} height={220} effects={glow} data={data} color="#00B894" />
       <Button title="Randomize" onPress={() => setData(randomWalk(30))} />
     </View>
   );
@@ -112,7 +116,7 @@ const CandleScreen = () => {
   return (
     <View style={{ gap: 12 }}>
       <Caption>{c ? `O ${c.open.toFixed(2)}  H ${c.high.toFixed(2)}  L ${c.low.toFixed(2)}  C ${c.close.toFixed(2)}` : 'Drag for OHLC'}</Caption>
-      <CandlestickChart width={w} height={260} data={data} onScrub={(x) => setC(x)} />
+      <CandlestickChart width={w} effects={glow} height={260} data={data} onScrub={(x) => setC(x)} />
       <Caption>OHLC bars</Caption>
       <OHLCChart width={w} height={200} data={data} />
     </View>
@@ -153,7 +157,7 @@ const CompatScreen = () => {
   const points = randomWalk(50).map((y, x) => ({ x, y }));
   return (
     <ChartPathProvider data={{ points, smoothingStrategy: 'bezier' }}>
-      <ChartYLabel style={{ fontSize: 22, fontWeight: '700', color: '#222' }} />
+      <ChartYLabel style={{ fontSize: 22, fontWeight: '700', color: theme.text }} />
       <View>
         <ChartPath width={w} height={200} stroke="#FD79A8" />
         <ChartDot color="#FD79A8" />
@@ -163,6 +167,7 @@ const CompatScreen = () => {
 };
 
 export const screens: { title: string; subtitle: string; Component: React.ComponentType }[] = [
+  { title: 'Playground', subtitle: 'Every option & GPU effect as a live control', Component: Playground },
   { title: 'Line', subtitle: 'Scrubbing, morphing, multi-series, sparkline', Component: LineScreen },
   { title: 'Area', subtitle: 'Gradient fill, grow-in', Component: AreaScreen },
   { title: 'Stacked area', subtitle: 'Absolute and 100%', Component: StackedAreaScreen },
