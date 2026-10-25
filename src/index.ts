@@ -32,4 +32,4 @@ export {
 } from './compat/AnimatedCharts';
 export type { ChartData, ChartPathProps } from './compat/AnimatedCharts';
 export { EffectsLayer, COLOR_MATRICES } from './effects/EffectsLayer';
-export type { ChartEffects, ChartBlendMode, ColorFilterPreset, ShaderPreset } from './effects/EffectsLayer';
+export type { ChartEffects, ChartGradient, ChartBlendMode, ColorFilterPreset, ShaderPreset } from './effects/EffectsLayer';

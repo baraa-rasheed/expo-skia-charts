@@ -1,5 +1,5 @@
 import type { SkFont } from 'react-native-skia';
-import type { ChartEffects } from './effects/EffectsLayer';
+import type { ChartEffects, ChartGradient } from './effects/EffectsLayer';
 import type { StyleProp, ViewStyle } from 'react-native';
 
 export interface Padding { top: number; right: number; bottom: number; left: number }
@@ -35,4 +35,6 @@ export interface BaseChartProps {
   backgroundColor?: string;
   /** GPU effects: shadow, glow, blur, colour filter, blend mode, dash/corner path effects, clip reveal, SkSL shader. */
   effects?: ChartEffects;
+  /** GPU gradient (linear / radial / sweep) applied to the chart's marks. */
+  gradient?: ChartGradient;
 }
