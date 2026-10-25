@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { EffectsLayer } from '../effects/EffectsLayer';
 import { View } from 'react-native';
 import { Canvas, Circle, Group, Line, LinearGradient, Path, vec } from 'react-native-skia';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
@@ -138,6 +139,7 @@ export const LineChart = (props: LineChartProps) => {
     <View style={[{ width, height }, style]}>
       <GestureDetector gesture={gesture}>
         <Canvas style={{ width, height, backgroundColor }}>
+          <EffectsLayer effects={props.effects} width={width} height={height}>
           {showGrid ? <Grid width={width} height={height} padding={pad} yTicks={ticks} yScale={yScale} font={font} formatY={formatY} /> : null}
           {geoms.map((g, i) => {
             const s = allSeries[i]!;
@@ -153,6 +155,7 @@ export const LineChart = (props: LineChartProps) => {
               <Circle cx={cx} cy={cy} r={4.5} color={allSeries[0]?.color ?? color} />
             </Group>
           ) : null}
+          </EffectsLayer>
         </Canvas>
       </GestureDetector>
     </View>

@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { EffectsLayer } from '../effects/EffectsLayer';
 import { Canvas, Circle, Group, Line, Path, SweepGradient, Text, vec, type SkFont } from 'react-native-skia';
 import { Easing, useDerivedValue, useSharedValue, withTiming } from 'react-native-reanimated';
 import type { BaseChartProps } from '../types';
@@ -23,7 +24,7 @@ export interface GaugeChartProps extends Omit<BaseChartProps, 'padding'> {
 }
 
 /** Speedometer-style gauge. Value changes animate the arc and needle on the UI thread. */
-export const GaugeChart = ({ width, height, style, value, min = 0, max = 100, sweep = 240, thickness = 16, color = '#6C5CE7', gradient, trackColor = 'rgba(128,128,128,0.2)', showNeedle = true, needleColor = '#333', formatValue = (v) => `${Math.round(v)}`, valueFont, valueColor = '#222', font, animation, backgroundColor }: GaugeChartProps) => {
+export const GaugeChart = ({ effects, width, height, style, value, min = 0, max = 100, sweep = 240, thickness = 16, color = '#6C5CE7', gradient, trackColor = 'rgba(128,128,128,0.2)', showNeedle = true, needleColor = '#333', formatValue = (v) => `${Math.round(v)}`, valueFont, valueColor = '#222', font, animation, backgroundColor }: GaugeChartProps) => {
   const cx = width / 2;
   const cy = height / 2 + (sweep <= 180 ? height / 4 : 0);
   const r = Math.min(width, sweep <= 180 ? height * 1.5 : height) / 2 - thickness;
@@ -40,6 +41,7 @@ export const GaugeChart = ({ width, height, style, value, min = 0, max = 100, sw
   const label = formatValue(value);
   return (
     <Canvas style={[{ width, height, backgroundColor }, style]}>
+      <EffectsLayer effects={effects} width={width} height={height}>
       <Path path={track} style="stroke" strokeWidth={thickness} strokeCap="round" color={trackColor} />
       <Path path={track} style="stroke" strokeWidth={thickness} strokeCap="round" color={color} start={0} end={t}>
         {gradient ? <SweepGradient c={vec(cx, cy)} colors={gradient} start={start} end={start + sweep} /> : null}
@@ -51,6 +53,7 @@ export const GaugeChart = ({ width, height, style, value, min = 0, max = 100, sw
         </Group>
       ) : null}
       {f ? <Text x={cx - f.measureText(label).width / 2} y={cy + r * 0.55} text={label} font={f} color={valueColor} /> : null}
+      </EffectsLayer>
     </Canvas>
   );
 };
