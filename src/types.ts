@@ -2,25 +2,69 @@ import type { SkFont } from 'react-native-skia';
 import type { ChartEffects, ChartGradient } from './effects/EffectsLayer';
 import type { StyleProp, ViewStyle } from 'react-native';
 
-export interface Padding { top: number; right: number; bottom: number; left: number }
+export interface Padding {
+  top: number;
+  right: number;
+  bottom: number;
+  left: number;
+}
 export type PaddingInput = number | Partial<Padding>;
 
 /** A position in chart pixels. */
-export interface Point { x: number; y: number }
+export interface Point {
+  x: number;
+  y: number;
+}
 /** A data-space sample for line/area charts. */
-export interface DataPoint { x: number; y: number }
-export interface ScatterPoint { x: number; y: number; color?: string }
-export interface BubblePoint { x: number; y: number; z: number; color?: string }
+export interface DataPoint {
+  x: number;
+  y: number;
+}
+export interface ScatterPoint {
+  x: number;
+  y: number;
+  color?: string;
+}
+export interface BubblePoint {
+  x: number;
+  y: number;
+  z: number;
+  color?: string;
+}
 /** One OHLC candle. `x` is usually an index or timestamp. */
-export interface Candle { x: number; open: number; high: number; low: number; close: number }
+export interface Candle {
+  x: number;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+}
 /** A pie/donut slice; slices are sized by `value` relative to the total. */
-export interface PieSlice { value: number; color: string; label?: string }
+export interface PieSlice {
+  value: number;
+  color: string;
+  label?: string;
+}
 /** One bar series; all series should have the same length. */
-export interface BarSeries { data: number[]; color: string; label?: string }
+export interface BarSeries {
+  data: number[];
+  color: string;
+  label?: string;
+}
 /** One progress ring; `progress` is 0..1. */
-export interface RingData { progress: number; color: string; backgroundColor?: string; label?: string }
+export interface RingData {
+  progress: number;
+  color: string;
+  backgroundColor?: string;
+  label?: string;
+}
 /** One radar polygon; `values` align with the chart's `axes`. */
-export interface RadarSeries { values: number[]; color: string; fillOpacity?: number; label?: string }
+export interface RadarSeries {
+  values: number[];
+  color: string;
+  fillOpacity?: number;
+  label?: string;
+}
 
 /** Line interpolation: straight segments, smooth monotone cubic, or steps. */
 export type CurveType = 'linear' | 'monotone' | 'step';

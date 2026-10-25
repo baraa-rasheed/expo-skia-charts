@@ -2,9 +2,16 @@ import React, { createContext, useContext, useEffect } from 'react';
 import { View } from 'react-native';
 import { Group } from 'react-native-skia';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import { runOnJS, useDerivedValue, useSharedValue, withSpring, withTiming, type SharedValue } from 'react-native-reanimated';
+import {
+  runOnJS,
+  useDerivedValue,
+  useSharedValue,
+  withSpring,
+  withTiming,
+  type SharedValue,
+} from 'react-native-reanimated';
 
-/** Pinch-zoom / pan options. `true` = defaults (1x–4x, double-tap to toggle 2x / reset). */
+/** Pinch-zoom / pan options. `true` = defaults (1x to 4x, double-tap to toggle 2x / reset). */
 export type ZoomConfig = boolean | { min?: number; max?: number; doubleTap?: boolean };
 
 /** Tap / long-press selection, shared by Bar, Pie/Donut, Scatter/Bubble, Heatmap and Progress Rings. */
@@ -23,11 +30,27 @@ export interface ZoomableProps {
   zoom?: ZoomConfig;
 }
 
-interface ZoomState { scale: SharedValue<number>; tx: SharedValue<number>; ty: SharedValue<number>; width: number; height: number }
+interface ZoomState {
+  scale: SharedValue<number>;
+  tx: SharedValue<number>;
+  ty: SharedValue<number>;
+  width: number;
+  height: number;
+}
 const ZoomContext = createContext<ZoomState | null>(null);
 const SPRING = { damping: 20, stiffness: 180 } as const;
 
-const ZoomFrame = ({ zoom, width, height, children }: { zoom: Exclude<ZoomConfig, false>; width: number; height: number; children: React.ReactNode }) => {
+const ZoomFrame = ({
+  zoom,
+  width,
+  height,
+  children,
+}: {
+  zoom: Exclude<ZoomConfig, false>;
+  width: number;
+  height: number;
+  children: React.ReactNode;
+}) => {
   const cfg = typeof zoom === 'object' ? zoom : {};
   const min = cfg.min ?? 1;
   const max = cfg.max ?? 4;
@@ -49,7 +72,13 @@ const ZoomFrame = ({ zoom, width, height, children }: { zoom: Exclude<ZoomConfig
     ty.value = withSpring(Math.min(my, Math.max(-my, ty.value)), SPRING);
   };
   const pinch = Gesture.Pinch()
-    .onStart((e) => { s0.value = scale.value; tx0.value = tx.value; ty0.value = ty.value; fx.value = e.focalX - width / 2; fy.value = e.focalY - height / 2; })
+    .onStart((e) => {
+      s0.value = scale.value;
+      tx0.value = tx.value;
+      ty0.value = ty.value;
+      fx.value = e.focalX - width / 2;
+      fy.value = e.focalY - height / 2;
+    })
     .onUpdate((e) => {
       // Rubber-band slightly past the limits, settle on release. Zoom around the focal point.
       const s = Math.min(max * 1.25, Math.max(min * 0.8, s0.value * e.scale));
@@ -59,14 +88,28 @@ const ZoomFrame = ({ zoom, width, height, children }: { zoom: Exclude<ZoomConfig
       ty.value = fy.value - (fy.value - ty0.value) * k;
     })
     .onEnd(settle);
-  const pan = Gesture.Pan().minPointers(2)
-    .onStart(() => { tx0.value = tx.value; ty0.value = ty.value; })
-    .onUpdate((e) => { tx.value = tx0.value + e.translationX; ty.value = ty0.value + e.translationY; })
+  const pan = Gesture.Pan()
+    .minPointers(2)
+    .onStart(() => {
+      tx0.value = tx.value;
+      ty0.value = ty.value;
+    })
+    .onUpdate((e) => {
+      tx.value = tx0.value + e.translationX;
+      ty.value = ty0.value + e.translationY;
+    })
     .onEnd(settle);
-  const doubleTap = Gesture.Tap().numberOfTaps(2).enabled(cfg.doubleTap ?? true)
+  const doubleTap = Gesture.Tap()
+    .numberOfTaps(2)
+    .enabled(cfg.doubleTap ?? true)
     .onEnd((e, ok) => {
       if (!ok) return;
-      if (scale.value > 1.01) { scale.value = withSpring(1, SPRING); tx.value = withSpring(0, SPRING); ty.value = withSpring(0, SPRING); return; }
+      if (scale.value > 1.01) {
+        scale.value = withSpring(1, SPRING);
+        tx.value = withSpring(0, SPRING);
+        ty.value = withSpring(0, SPRING);
+        return;
+      }
       const s = Math.min(max, 2);
       scale.value = withSpring(s, SPRING);
       tx.value = withSpring(-(e.x - width / 2) * (s - 1), SPRING);
@@ -82,14 +125,32 @@ const ZoomFrame = ({ zoom, width, height, children }: { zoom: Exclude<ZoomConfig
 };
 
 /** Wraps a chart to enable pinch-zoom / pan when `zoom` is set; otherwise renders children unchanged. */
-export const ChartFrame = ({ zoom, width, height, children }: { zoom?: ZoomConfig; width: number; height: number; children: React.ReactNode }) =>
-  zoom ? <ZoomFrame zoom={zoom} width={width} height={height}>{children}</ZoomFrame> : <>{children}</>;
+export const ChartFrame = ({
+  zoom,
+  width,
+  height,
+  children,
+}: {
+  zoom?: ZoomConfig;
+  width: number;
+  height: number;
+  children: React.ReactNode;
+}) =>
+  zoom ? (
+    <ZoomFrame zoom={zoom} width={width} height={height}>
+      {children}
+    </ZoomFrame>
+  ) : (
+    <>{children}</>
+  );
 
 const ZoomGroupInner = ({ z, children }: { z: ZoomState; children: React.ReactNode }) => {
   const transform = useDerivedValue(() => [
-    { translateX: z.width / 2 + z.tx.value }, { translateY: z.height / 2 + z.ty.value },
+    { translateX: z.width / 2 + z.tx.value },
+    { translateY: z.height / 2 + z.ty.value },
     { scale: z.scale.value },
-    { translateX: -z.width / 2 }, { translateY: -z.height / 2 },
+    { translateX: -z.width / 2 },
+    { translateY: -z.height / 2 },
   ]);
   return <Group transform={transform}>{children}</Group>;
 };
@@ -125,9 +186,13 @@ export const useSelection = (
 ): { gesture: ReturnType<typeof Gesture.Exclusive>; selected: SharedValue<number> } => {
   const selected = useSharedValue(selectedIndex ?? -1);
   const toChart = useToChart();
-  useEffect(() => { if (selectedIndex !== undefined) selected.value = selectedIndex ?? -1; }, [selectedIndex, selected]);
+  useEffect(() => {
+    if (selectedIndex !== undefined) selected.value = selectedIndex ?? -1;
+  }, [selectedIndex, selected]);
   const emit = (i: number) => onSelect?.(i < 0 ? null : i);
-  const tap = Gesture.Tap().enabled(selectable).maxDuration(280)
+  const tap = Gesture.Tap()
+    .enabled(selectable)
+    .maxDuration(280)
     .onEnd((e, ok) => {
       if (!ok) return;
       const [x, y] = toChart(e.x, e.y);
@@ -136,7 +201,9 @@ export const useSelection = (
       selected.value = next;
       if (onSelect) runOnJS(emit)(next);
     });
-  const long = Gesture.LongPress().enabled(selectable).minDuration(320)
+  const long = Gesture.LongPress()
+    .enabled(selectable)
+    .minDuration(320)
     .onStart((e) => {
       const [x, y] = toChart(e.x, e.y);
       const i = hitTest(x, y);
@@ -148,4 +215,6 @@ export const useSelection = (
 
 /** Opacity for mark `index`: 1 when nothing or this mark is selected, `dim` otherwise (animated). */
 export const useHighlight = (selected: SharedValue<number> | undefined, index: number, dim = 0.28) =>
-  useDerivedValue(() => withTiming(!selected || selected.value < 0 || selected.value === index ? 1 : dim, { duration: 180 }));
+  useDerivedValue(() =>
+    withTiming(!selected || selected.value < 0 || selected.value === index ? 1 : dim, { duration: 180 }),
+  );

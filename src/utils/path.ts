@@ -24,7 +24,7 @@ const appendCurve = (b: Builder, pts: readonly Point[], curve: CurveType, connec
     }
     return;
   }
-  // Monotone cubic (Fritsch–Carlson) – no overshoot, ideal for financial data.
+  // Monotone cubic (Fritsch-Carlson): no overshoot, ideal for financial data.
   const n = pts.length;
   const dx: number[] = [];
   const slope: number[] = [];
@@ -38,7 +38,11 @@ const appendCurve = (b: Builder, pts: readonly Point[], curve: CurveType, connec
   for (let i = 1; i < n - 1; i++) {
     const s0 = slope[i - 1]!;
     const s1 = slope[i]!;
-    m.push(s0 * s1 <= 0 ? 0 : (3 * (dx[i - 1]! + dx[i]!)) / ((2 * dx[i]! + dx[i - 1]!) / s0 + (dx[i]! + 2 * dx[i - 1]!) / s1));
+    m.push(
+      s0 * s1 <= 0
+        ? 0
+        : (3 * (dx[i - 1]! + dx[i]!)) / ((2 * dx[i]! + dx[i - 1]!) / s0 + (dx[i]! + 2 * dx[i - 1]!) / s1),
+    );
   }
   m.push(slope[n - 2]!);
   for (let i = 0; i < n - 1; i++) {
@@ -57,7 +61,11 @@ export const buildLinePath = (pts: readonly Point[], curve: CurveType = 'monoton
 };
 
 /** Close a line path down to a baseline to form an area. */
-export const buildAreaPath = (pts: readonly Point[], baselineY: number, curve: CurveType = 'monotone'): SkPath => {
+export const buildAreaPath = (
+  pts: readonly Point[],
+  baselineY: number,
+  curve: CurveType = 'monotone',
+): SkPath => {
   const b = Skia.PathBuilder.Make();
   appendCurve(b, pts, curve);
   if (pts.length > 0) {
@@ -69,7 +77,11 @@ export const buildAreaPath = (pts: readonly Point[], baselineY: number, curve: C
 };
 
 /** Area between an upper and lower line (for stacked areas). */
-export const buildBandPath = (upper: readonly Point[], lower: readonly Point[], curve: CurveType = 'monotone'): SkPath => {
+export const buildBandPath = (
+  upper: readonly Point[],
+  lower: readonly Point[],
+  curve: CurveType = 'monotone',
+): SkPath => {
   const b = Skia.PathBuilder.Make();
   appendCurve(b, upper, curve);
   appendCurve(b, [...lower].reverse(), curve, true);
@@ -87,7 +99,14 @@ export const arcPath = (cx: number, cy: number, r: number, startDeg: number, swe
   return p.detach();
 };
 
-export const slicePath = (cx: number, cy: number, r: number, inner: number, startDeg: number, sweepDeg: number): SkPath => {
+export const slicePath = (
+  cx: number,
+  cy: number,
+  r: number,
+  inner: number,
+  startDeg: number,
+  sweepDeg: number,
+): SkPath => {
   'worklet';
   const p = Skia.PathBuilder.Make();
   const outer = { x: cx - r, y: cy - r, width: r * 2, height: r * 2 };
