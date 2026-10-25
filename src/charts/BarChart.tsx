@@ -7,8 +7,12 @@ import { resolvePadding } from '../utils/padding';
 import { extent, linearScale, niceTicks } from '../utils/scale';
 import { useEntryProgress } from '../hooks/useEntryProgress';
 import { Grid } from './Grid';
+import { ChartFrame, ZoomGroup, useHighlight, useSelection, type SelectableProps, type ZoomableProps } from '../interaction';
+import { GestureDetector } from 'react-native-gesture-handler';
 
-export interface BarChartProps extends BaseChartProps {
+
+/** Bars. Selection index = category (slot) index. */
+export interface BarChartProps extends BaseChartProps, SelectableProps, ZoomableProps {
   /** Single series shorthand. */
   data?: number[];
   /** Primary mark colour (hex). */
@@ -31,7 +35,8 @@ export interface BarChartProps extends BaseChartProps {
 
 interface BarGeom { x: number; y: number; w: number; h: number; color: string; order: number; horizontal: boolean; base: number }
 
-const AnimatedBar = ({ g, progress, radius, count, stagger }: { g: BarGeom; progress: SharedValue<number>; radius: number; count: number; stagger: number }) => {
+const AnimatedBar = ({ g, progress, radius, count, stagger, selected }: { g: BarGeom; progress: SharedValue<number>; radius: number; count: number; stagger: number; selected: SharedValue<number> }) => {
+  const opacity = useHighlight(selected, g.order);
   const t = useDerivedValue(() => {
     const s = (g.order / Math.max(1, count)) * stagger;
     const v = (progress.value - s) / (1 - stagger);
@@ -41,7 +46,7 @@ const AnimatedBar = ({ g, progress, radius, count, stagger }: { g: BarGeom; prog
   const y = useDerivedValue(() => (g.horizontal ? g.y : g.base + (g.y - g.base) * t.value));
   const w = useDerivedValue(() => (g.horizontal ? g.w * t.value : g.w));
   const h = useDerivedValue(() => (g.horizontal ? g.h : g.h * t.value));
-  return <RoundedRect x={x} y={y} width={w} height={h} r={radius} color={g.color} />;
+  return <RoundedRect x={x} y={y} width={w} height={h} r={radius} color={g.color} opacity={opacity} />;
 };
 
 /** Vertical / horizontal, grouped or stacked bar chart with staggered grow-in. */
@@ -52,7 +57,7 @@ export const BarChart = (props: BarChartProps) => {
   if (font) { pad.left = Math.max(pad.left, 36); pad.bottom = Math.max(pad.bottom, 20); }
   const all: BarSeries[] = useMemo(() => series ?? (data ? [{ data, color }] : []), [series, data, color]);
 
-  const { bars, ticks, valueScale, xLabels } = useMemo(() => {
+  const { bars, ticks, valueScale, xLabels, start, slot } = useMemo(() => {
     const n = Math.max(0, ...all.map((s) => s.data.length));
     const totals: number[] = [];
     const negTotals: number[] = [];
@@ -96,21 +101,32 @@ export const BarChart = (props: BarChartProps) => {
         }
       });
     }
-    return { bars: out, ticks: niceTicks(vd, 4), valueScale: vS, xLabels: xl, count: n };
+    return { bars: out, ticks: niceTicks(vd, 4), valueScale: vS, xLabels: xl, count: n, start: along[0], slot };
   }, [all, stacked, horizontal, width, height, pad.left, pad.right, pad.top, pad.bottom, barWidthRatio, labels]);
 
   const progress = useEntryProgress(animation ?? { duration: 800 }, [bars]);
   const count = Math.max(1, ...all.map((s) => s.data.length));
+  const { gesture, selected } = useSelection(props, (px, py) => {
+    'worklet';
+    const i = Math.floor(((horizontal ? py : px) - start) / slot);
+    return i >= 0 && i < count ? i : -1;
+  });
 
   return (
+    <ChartFrame zoom={props.zoom} width={width} height={height}>
+    <GestureDetector gesture={gesture}>
     <Canvas style={[{ width, height, backgroundColor }, style]}>
+      <ZoomGroup>
       {showGrid && !horizontal ? <Grid width={width} height={height} padding={pad} yTicks={ticks} yScale={valueScale} font={font} formatY={formatY} xLabels={xLabels} /> : null}
       <EffectsLayer effects={props.effects} gradient={props.gradient} width={width} height={height}>
       <Group>
-        {bars.map((g, i) => <AnimatedBar key={i} g={g} progress={progress} radius={radius} count={count} stagger={stagger} />)}
+        {bars.map((g, i) => <AnimatedBar key={i} g={g} progress={progress} radius={radius} count={count} stagger={stagger} selected={selected} />)}
       </Group>
       </EffectsLayer>
+      </ZoomGroup>
     </Canvas>
+    </GestureDetector>
+    </ChartFrame>
   );
 };
 
