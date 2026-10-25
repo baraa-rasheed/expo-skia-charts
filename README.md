@@ -29,9 +29,37 @@ import { LineChart } from 'expo-skia-charts';
 />
 ```
 
+## Charts
+
+Click a chart to open its docs page.
+
+<table>
+  <tr>
+    <td align="center" width="25%"><a href="https://baraa-rasheed.github.io/expo-skia-charts/docs/charts/line"><img src="website/static/img/charts/line.svg" width="150" alt="Line" /><br /><b>Line</b></a></td>
+    <td align="center" width="25%"><a href="https://baraa-rasheed.github.io/expo-skia-charts/docs/charts/area"><img src="website/static/img/charts/area.svg" width="150" alt="Area & Sparkline" /><br /><b>Area &amp; Sparkline</b></a></td>
+    <td align="center" width="25%"><a href="https://baraa-rasheed.github.io/expo-skia-charts/docs/charts/bar"><img src="website/static/img/charts/bar.svg" width="150" alt="Bar" /><br /><b>Bar</b></a></td>
+    <td align="center" width="25%"><a href="https://baraa-rasheed.github.io/expo-skia-charts/docs/charts/stacked-bar"><img src="website/static/img/charts/stacked-bar.svg" width="150" alt="Stacked bar" /><br /><b>Stacked bar</b></a></td>
+  </tr>
+  <tr>
+    <td align="center" width="25%"><a href="https://baraa-rasheed.github.io/expo-skia-charts/docs/charts/histogram"><img src="website/static/img/charts/histogram.svg" width="150" alt="Histogram" /><br /><b>Histogram</b></a></td>
+    <td align="center" width="25%"><a href="https://baraa-rasheed.github.io/expo-skia-charts/docs/charts/stacked-area"><img src="website/static/img/charts/stacked-area.svg" width="150" alt="Stacked area" /><br /><b>Stacked area</b></a></td>
+    <td align="center" width="25%"><a href="https://baraa-rasheed.github.io/expo-skia-charts/docs/charts/pie-donut"><img src="website/static/img/charts/pie-donut.svg" width="150" alt="Pie & Donut" /><br /><b>Pie &amp; Donut</b></a></td>
+    <td align="center" width="25%"><a href="https://baraa-rasheed.github.io/expo-skia-charts/docs/charts/scatter"><img src="website/static/img/charts/scatter.svg" width="150" alt="Scatter" /><br /><b>Scatter</b></a></td>
+  </tr>
+  <tr>
+    <td align="center" width="25%"><a href="https://baraa-rasheed.github.io/expo-skia-charts/docs/charts/bubble"><img src="website/static/img/charts/bubble.svg" width="150" alt="Bubble" /><br /><b>Bubble</b></a></td>
+    <td align="center" width="25%"><a href="https://baraa-rasheed.github.io/expo-skia-charts/docs/charts/radar"><img src="website/static/img/charts/radar.svg" width="150" alt="Radar" /><br /><b>Radar</b></a></td>
+    <td align="center" width="25%"><a href="https://baraa-rasheed.github.io/expo-skia-charts/docs/charts/candlestick"><img src="website/static/img/charts/candlestick.svg" width="150" alt="Candlestick & OHLC" /><br /><b>Candlestick &amp; OHLC</b></a></td>
+    <td align="center" width="25%"><a href="https://baraa-rasheed.github.io/expo-skia-charts/docs/charts/heatmap"><img src="website/static/img/charts/heatmap.svg" width="150" alt="Heatmap" /><br /><b>Heatmap</b></a></td>
+  </tr>
+  <tr>
+    <td align="center" width="25%"><a href="https://baraa-rasheed.github.io/expo-skia-charts/docs/charts/gauge"><img src="website/static/img/charts/gauge.svg" width="150" alt="Gauge" /><br /><b>Gauge</b></a></td>
+    <td align="center" width="25%"><a href="https://baraa-rasheed.github.io/expo-skia-charts/docs/charts/progress-rings"><img src="website/static/img/charts/progress-rings.svg" width="150" alt="Progress rings" /><br /><b>Progress rings</b></a></td>
+  </tr>
+</table>
+
 ## What you get
 
-- **Charts:** Line, Area, Sparkline, Bar, Stacked bar, Histogram, Stacked area, Pie, Donut, Radar, Gauge, Progress rings, Scatter, Bubble, Heatmap, Candlestick and OHLC.
 - **Touch:**
   - Scrub or use a crosshair on line, area and candle charts.
   - Tap or long-press to select a bar, slice, point, cell or ring.

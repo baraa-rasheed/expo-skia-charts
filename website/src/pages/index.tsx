@@ -3,6 +3,7 @@ import Link from '@docusaurus/Link';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 import Layout from '@theme/Layout';
 import styles from './index.module.css';
+import ChartGrid from '../components/ChartGrid';
 
 const features = [
   { title: 'GPU rendered', body: 'Drawn by Skia Graphite on Metal and Vulkan via react-native-skia 3.8.' },
@@ -32,6 +33,10 @@ export default function Home(): ReactNode {
           <div key={f.title} className={styles.card}><h3>{f.title}</h3><p>{f.body}</p></div>
         ))}
       </main>
+      <section style={{ maxWidth: 1000, margin: '0 auto', padding: '0 1rem 3rem' }}>
+        <h2 style={{ textAlign: 'center' }}>What you get</h2>
+        <ChartGrid />
+      </section>
     </Layout>
   );
 }
