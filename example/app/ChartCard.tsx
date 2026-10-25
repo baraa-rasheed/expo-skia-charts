@@ -1,6 +1,6 @@
 import React, { memo, useMemo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { Sparkline } from 'expo-skia-charts';
+import { Sparkline } from 'react-native-skia-chart';
 import { SymbolView } from 'expo-symbols';
 import { effectsFor, gradientFor, makeRng, type ChartConfig, type ChartDef } from './charts';
 import { theme } from './theme';

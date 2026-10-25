@@ -3,7 +3,7 @@ import { Platform, Pressable, ScrollView, StyleSheet, Switch, Text, View } from 
 import { BlurView } from 'expo-blur';
 import * as Haptics from 'expo-haptics';
 import { SymbolView, type SymbolViewProps } from 'expo-symbols';
-import type { ColorFilterPreset, ShaderPreset } from 'expo-skia-charts';
+import type { ColorFilterPreset, ShaderPreset } from 'react-native-skia-chart';
 import { CHARTS, type GradientKind } from './charts';
 import { Segmented } from './Segmented';
 import { useChartStore } from './store';

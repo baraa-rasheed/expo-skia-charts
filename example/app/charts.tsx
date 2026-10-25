@@ -3,7 +3,7 @@ import {
   AreaChart, BarChart, BubbleChart, CandlestickChart, DonutChart, GaugeChart, HeatmapChart, Histogram, LineChart, OHLCChart,
   PieChart, ProgressRings, RadarChart, ScatterChart, StackedAreaChart, StackedBarChart, type Candle, type ChartEffects,
   type ChartGradient, type ColorFilterPreset, type ShaderPreset,
-} from 'expo-skia-charts';
+} from 'react-native-skia-chart';
 import { palette, theme } from './theme';
 
 /* ---------------- deterministic data ---------------- */
