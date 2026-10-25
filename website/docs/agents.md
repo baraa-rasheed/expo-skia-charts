@@ -4,21 +4,21 @@ title: Using with AI agents
 sidebar_label: AI agents
 ---
 
-expo-skia-charts is built to be **agent-ready**. It has predictable props, strict types, and no hidden configuration, so AI coding agents (Cursor, Claude, Grok, Copilot) can generate correct charts on the first try.
+react-native-skia-chart is built to be **agent-ready**. It has predictable props, strict types, and no hidden configuration, so AI coding agents (Cursor, Claude, Grok, Copilot) can generate correct charts on the first try.
 
 Agents can find guidance in three places:
-- [`AGENTS.md`](https://github.com/baraa-rasheed/expo-skia-charts/blob/main/AGENTS.md) at the repo root, which most agents read automatically;
-- [`/llms.txt`](pathname:///expo-skia-charts/llms.txt), an index for LLM crawlers;
-- [`example/recipes/agent-recipes.tsx`](https://github.com/baraa-rasheed/expo-skia-charts/blob/main/example/recipes/agent-recipes.tsx), a set of copy-paste recipes that compile under strict TypeScript (`npx tsc --noEmit` in `example/`).
+- [`AGENTS.md`](https://github.com/baraa-rasheed/react-native-skia-chart/blob/main/AGENTS.md) at the repo root, which most agents read automatically;
+- [`/llms.txt`](pathname:///react-native-skia-chart/llms.txt), an index for LLM crawlers;
+- [`example/recipes/agent-recipes.tsx`](https://github.com/baraa-rasheed/react-native-skia-chart/blob/main/example/recipes/agent-recipes.tsx), a set of copy-paste recipes that compile under strict TypeScript (`npx tsc --noEmit` in `example/`).
 
 Every exported prop has JSDoc, so hover info and the `.d.ts` files carry the same guidance.
 
 :::tip Prompt template
-"Using **expo-skia-charts** (react-native-skia 3.8), add an interactive area chart of `data: number[]` with a teal→violet gradient, full width minus 32px, 220px tall. Follow AGENTS.md."
+"Using **react-native-skia-chart** (react-native-skia 3.8), add an interactive area chart of `data: number[]` with a teal→violet gradient, full width minus 32px, 220px tall. Follow AGENTS.md."
 :::
 
 ## Rules for agents
-1. Import everything from `'expo-skia-charts'`. Skia is `react-native-skia` **3.8.0** (not `@shopify/react-native-skia`).
+1. Import everything from `'react-native-skia-chart'`. Skia is `react-native-skia` **3.8.0** (not `@shopify/react-native-skia`).
 2. `width` and `height` are **required numbers in pixels**. No `'100%'`. Use `useWindowDimensions()` or `onLayout`.
 3. Data is plain arrays: `number[]`, `{x,y}[]`, or the typed shapes below. Colours are hex strings (`'#7C5CFF'`).
 4. Text labels render only when you pass a Skia `font` (`useFont(require('./Inter.ttf'), 11)`). No font means no labels and no error.
@@ -49,7 +49,7 @@ Axis charts also take `showGrid`, `formatY(v) => string` and `color`.
 ## Canonical snippet
 ```tsx
 import { useWindowDimensions } from 'react-native';
-import { AreaChart } from 'expo-skia-charts';
+import { AreaChart } from 'react-native-skia-chart';
 
 export function Revenue({ data }: { data: number[] }) {
   const { width } = useWindowDimensions();
@@ -71,7 +71,7 @@ export function Revenue({ data }: { data: number[] }) {
 - Don't wrap charts in `<Canvas>`. Each chart renders its own.
 - Don't pass strings for numeric values, or `undefined` holes in `data`.
 - Don't use `glow: true`. `glow` is a number (blur sigma). `shadow` accepts `true` or an object.
-- Don't import from `expo-skia-charts/src/...` or from build paths.
+- Don't import from `react-native-skia-chart/src/...` or from build paths.
 
 ## More patterns
 ```tsx

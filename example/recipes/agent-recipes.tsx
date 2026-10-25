@@ -1,5 +1,5 @@
 /**
- * Canonical, type-checked recipes for expo-skia-charts. AI agents: copy these patterns.
+ * Canonical, type-checked recipes for react-native-skia-chart. AI agents: copy these patterns.
  * Every snippet here compiles under `strict` TypeScript (checked by `npx tsc --noEmit` in example/).
  */
 import React, { useState } from 'react';
@@ -9,7 +9,7 @@ import {
   AreaChart, BarChart, CandlestickChart, DonutChart, GaugeChart, HeatmapChart, LineChart, ProgressRings,
   RadarChart, ScatterChart, Sparkline, StackedAreaChart,
   type Candle, type ChartEffects, type ChartGradient, type DataPoint,
-} from 'expo-skia-charts';
+} from 'react-native-skia-chart';
 
 // 1. Responsive line chart: width/height are REQUIRED numbers (pixels). Derive them from layout.
 export function PriceLine({ prices }: { prices: number[] }) {

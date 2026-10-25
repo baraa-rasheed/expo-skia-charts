@@ -41,7 +41,7 @@ Effects that need a layer (`shadow`, `blur`, `colorFilter`, `blendMode`, `shader
 
 ```tsx
 import { Canvas, Circle } from 'react-native-skia';
-import { EffectsLayer } from 'expo-skia-charts';
+import { EffectsLayer } from 'react-native-skia-chart';
 
 <Canvas style={{ width: 200, height: 200 }}>
   <EffectsLayer width={200} height={200} effects={{ glow: 10, shader: 'aurora' }}>
