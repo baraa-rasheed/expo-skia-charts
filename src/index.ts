@@ -1,13 +1,13 @@
 /**
- * expo-skia-charts: GPU charts for Expo / React Native (react-native-skia 3.8.0).
+ * react-native-skia-chart: GPU charts for Expo / React Native (react-native-skia 3.8.0).
  *
- * Agents: read AGENTS.md (shipped with the package) or https://baraa-rasheed.github.io/expo-skia-charts/docs/agents
+ * Agents: read AGENTS.md (shipped with the package) or https://baraa-rasheed.github.io/react-native-skia-chart/docs/agents
  *   - `width` and `height` are required pixel numbers on every chart.
  *   - `gradient?: ChartGradient` and `effects?: ChartEffects` are optional on every chart.
  *   - Labels render only when a Skia `font` is passed.
  *
  * @example
- * import { LineChart } from 'expo-skia-charts';
+ * import { LineChart } from 'react-native-skia-chart';
  * <LineChart data={[3, 7, 5, 9]} width={320} height={200} curve="monotone" interactive />
  */
 // Skia API docs, examples & best practices: https://github.com/wcandillon/react-native-skia

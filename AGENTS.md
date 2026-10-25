@@ -1,10 +1,10 @@
-# AGENTS.md: expo-skia-charts
+# AGENTS.md: react-native-skia-chart
 
 Guidance for AI coding agents (Cursor, Claude, Grok, Copilot, …) generating charts with this package.
-Full docs: https://baraa-rasheed.github.io/expo-skia-charts/docs/agents · Type-checked recipes: [`example/recipes/agent-recipes.tsx`](example/recipes/agent-recipes.tsx)
+Full docs: https://baraa-rasheed.github.io/react-native-skia-chart/docs/agents · Type-checked recipes: [`example/recipes/agent-recipes.tsx`](example/recipes/agent-recipes.tsx)
 
 ## Rules
-1. Import everything from `'expo-skia-charts'`. Skia is `react-native-skia` **3.8.0** (not `@shopify/react-native-skia`).
+1. Import everything from `'react-native-skia-chart'`. Skia is `react-native-skia` **3.8.0** (not `@shopify/react-native-skia`).
 2. `width` and `height` are **required numbers in pixels**. No `'100%'`. Use `useWindowDimensions()` or `onLayout`.
 3. Data is plain arrays: `number[]`, `{x,y}[]`, or the typed shapes below. Colours are hex strings (`'#7C5CFF'`).
 4. Text labels render only when you pass a Skia `font` (`useFont(require('./Inter.ttf'), 11)`). No font means no labels and no error.
@@ -35,7 +35,7 @@ Axis charts also take `showGrid`, `formatY(v) => string` and `color`.
 ## Canonical snippet
 ```tsx
 import { useWindowDimensions } from 'react-native';
-import { AreaChart } from 'expo-skia-charts';
+import { AreaChart } from 'react-native-skia-chart';
 
 export function Revenue({ data }: { data: number[] }) {
   const { width } = useWindowDimensions();
@@ -57,7 +57,7 @@ export function Revenue({ data }: { data: number[] }) {
 - Don't wrap charts in `<Canvas>`. Each chart renders its own.
 - Don't pass strings for numeric values, or `undefined` holes in `data`.
 - Don't use `glow: true`. `glow` is a number (blur sigma). `shadow` accepts `true` or an object.
-- Don't import from `expo-skia-charts/src/...` or from build paths.
+- Don't import from `react-native-skia-chart/src/...` or from build paths.
 
 ## Interactivity
 

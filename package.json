@@ -1,5 +1,5 @@
 {
-  "name": "expo-skia-charts",
+  "name": "react-native-skia-chart",
   "version": "0.2.0",
   "description": "GPU-accelerated, animated charts for React Native & Expo, rendered with React Native Skia (docs: github.com/wcandillon/react-native-skia) and animated with Reanimated worklets. A modern successor to @rainbow-me/react-native-animated-charts.",
   "main": "build/index.js",
@@ -41,12 +41,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/baraa-rasheed/expo-skia-charts.git"
+    "url": "git+https://github.com/baraa-rasheed/react-native-skia-chart.git"
   },
   "bugs": {
-    "url": "https://github.com/baraa-rasheed/expo-skia-charts/issues"
+    "url": "https://github.com/baraa-rasheed/react-native-skia-chart/issues"
   },
-  "homepage": "https://github.com/baraa-rasheed/expo-skia-charts#readme",
+  "homepage": "https://github.com/baraa-rasheed/react-native-skia-chart#readme",
   "author": "Baraa Rasheed (https://github.com/baraa-rasheed)",
   "license": "MIT",
   "peerDependencies": {
