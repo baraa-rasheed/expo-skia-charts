@@ -6,7 +6,13 @@ import { Canvas, Circle, Group, Line, LinearGradient, Path, vec } from 'react-na
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { ChartFrame, ZoomGroup, useToChart, type ZoomableProps } from '../interaction';
 
-import { runOnJS, useAnimatedReaction, useDerivedValue, useSharedValue, withTiming } from 'react-native-reanimated';
+import {
+  runOnJS,
+  useAnimatedReaction,
+  useDerivedValue,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 import type { BaseChartProps, CurveType, DataPoint, Point } from '../types';
 import { resolvePadding } from '../utils/padding';
 import { extent, linearScale, niceTicks } from '../utils/scale';
@@ -54,18 +60,47 @@ export interface LineChartProps extends BaseChartProps, ZoomableProps {
 }
 
 export const normalize = (data: number[] | DataPoint[]): DataPoint[] =>
-  data.length > 0 && typeof data[0] === 'number' ? (data as number[]).map((y, x) => ({ x, y })) : (data as DataPoint[]);
+  data.length > 0 && typeof data[0] === 'number'
+    ? (data as number[]).map((y, x) => ({ x, y }))
+    : (data as DataPoint[]);
 
-interface SeriesGeom { line: Point[]; raw: DataPoint[] }
+interface SeriesGeom {
+  line: Point[];
+  raw: DataPoint[];
+}
 
-const SeriesPath = ({ pts, baseline, curve, color, strokeWidth, fill, fillOpacity, top, entry, progress, duration }: {
-  pts: Point[]; baseline: number; curve: CurveType; color: string; strokeWidth: number; fill: boolean; fillOpacity: number; top: number;
-  entry: 'draw' | 'grow' | 'none'; progress: ReturnType<typeof useEntryProgress>; duration: number;
+const SeriesPath = ({
+  pts,
+  baseline,
+  curve,
+  color,
+  strokeWidth,
+  fill,
+  fillOpacity,
+  top,
+  entry,
+  progress,
+  duration,
+}: {
+  pts: Point[];
+  baseline: number;
+  curve: CurveType;
+  color: string;
+  strokeWidth: number;
+  fill: boolean;
+  fillOpacity: number;
+  top: number;
+  entry: 'draw' | 'grow' | 'none';
+  progress: ReturnType<typeof useEntryProgress>;
+  duration: number;
 }) => {
   const line = useMemo(() => buildLinePath(pts, curve), [pts, curve]);
   const flat = useMemo(() => buildLinePath(flatten(pts, baseline), curve), [pts, baseline, curve]);
   const area = useMemo(() => buildAreaPath(pts, baseline, curve), [pts, baseline, curve]);
-  const flatArea = useMemo(() => buildAreaPath(flatten(pts, baseline), baseline, curve), [pts, baseline, curve]);
+  const flatArea = useMemo(
+    () => buildAreaPath(flatten(pts, baseline), baseline, curve),
+    [pts, baseline, curve],
+  );
   const morphLine = usePathTransition(line, entry === 'grow' ? flat : line, duration);
   const morphArea = usePathTransition(area, entry === 'grow' ? flatArea : area, duration);
   const end = useDerivedValue(() => (entry === 'draw' ? progress.value : 1));
@@ -78,7 +113,16 @@ const SeriesPath = ({ pts, baseline, curve, color, strokeWidth, fill, fillOpacit
           <LinearGradient start={vec(0, top)} end={vec(0, baseline)} colors={[color, `${color}00`]} />
         </Path>
       ) : null}
-      <Path path={morphLine} style="stroke" strokeWidth={strokeWidth} strokeJoin="round" strokeCap="round" color={color} start={0} end={end} />
+      <Path
+        path={morphLine}
+        style="stroke"
+        strokeWidth={strokeWidth}
+        strokeJoin="round"
+        strokeCap="round"
+        color={color}
+        start={0}
+        end={end}
+      />
     </Group>
   );
 };
@@ -86,8 +130,28 @@ const SeriesPath = ({ pts, baseline, curve, color, strokeWidth, fill, fillOpacit
 /** Animated line / multi-line chart with optional gradient fill and scrubbing cursor. */
 export const LineChart = (props: LineChartProps) => {
   const {
-    width, height, style, animation, font, backgroundColor, data, color = '#6C5CE7', strokeWidth = 2.5, series, curve = 'monotone',
-    fill = false, showGrid = true, gridTicks = 4, formatY, yDomain, interactive = true, scrubActivation = 'pan', zoom, cursorColor = '#999', onScrub, entry = 'draw',
+    width,
+    height,
+    style,
+    animation,
+    font,
+    backgroundColor,
+    data,
+    color = '#6C5CE7',
+    strokeWidth = 2.5,
+    series,
+    curve = 'monotone',
+    fill = false,
+    showGrid = true,
+    gridTicks = 4,
+    formatY,
+    yDomain,
+    interactive = true,
+    scrubActivation = 'pan',
+    zoom,
+    cursorColor = '#999',
+    onScrub,
+    entry = 'draw',
   } = props;
   const pad = resolvePadding(props.padding, 16);
   if (font) pad.left = Math.max(pad.left, 36);
@@ -124,7 +188,10 @@ export const LineChart = (props: LineChartProps) => {
     let bd = Infinity;
     for (let i = 0; i < pxs.length; i++) {
       const d = Math.abs((pxs[i] as number) - x);
-      if (d < bd) { bd = d; best = i; }
+      if (d < bd) {
+        bd = d;
+        best = i;
+      }
     }
     return best;
   };
@@ -133,7 +200,12 @@ export const LineChart = (props: LineChartProps) => {
     const raw = first?.raw[i];
     onScrub(i >= 0 && raw ? raw : null, i);
   };
-  useAnimatedReaction(() => index.value, (i, prev) => { if (i !== prev && onScrub) runOnJS(emit)(i); });
+  useAnimatedReaction(
+    () => index.value,
+    (i, prev) => {
+      if (i !== prev && onScrub) runOnJS(emit)(i);
+    },
+  );
   const toChart = useToChart();
   const gesture = Gesture.Pan()
     .maxPointers(1)
@@ -141,9 +213,21 @@ export const LineChart = (props: LineChartProps) => {
     .enabled(interactive && pxs.length > 0)
     .minDistance(0)
     .shouldCancelWhenOutside(false)
-    .onStart((e) => { const i = findIndex(toChart(e.x, e.y)[0]); shown.value = i; index.value = i; active.value = withTiming(1, { duration: 120 }); })
-    .onUpdate((e) => { const i = findIndex(toChart(e.x, e.y)[0]); shown.value = i; index.value = i; })
-    .onFinalize(() => { active.value = withTiming(0, { duration: 160 }); index.value = -1; });
+    .onStart((e) => {
+      const i = findIndex(toChart(e.x, e.y)[0]);
+      shown.value = i;
+      index.value = i;
+      active.value = withTiming(1, { duration: 120 });
+    })
+    .onUpdate((e) => {
+      const i = findIndex(toChart(e.x, e.y)[0]);
+      shown.value = i;
+      index.value = i;
+    })
+    .onFinalize(() => {
+      active.value = withTiming(0, { duration: 160 });
+      index.value = -1;
+    });
   const cx = useDerivedValue(() => (shown.value >= 0 ? (pxs[shown.value] ?? 0) : (pxs[pxs.length - 1] ?? 0)));
   const cy = useDerivedValue(() => (shown.value >= 0 ? (pys[shown.value] ?? 0) : (pys[pys.length - 1] ?? 0)));
   const p1 = useDerivedValue(() => vec(cx.value, pad.top));
@@ -151,31 +235,53 @@ export const LineChart = (props: LineChartProps) => {
 
   return (
     <ChartFrame zoom={zoom} width={width} height={height}>
-    <View style={[{ width, height }, style]}>
-      <GestureDetector gesture={gesture}>
-        <Canvas style={{ width, height, backgroundColor }}>
-          <ZoomGroup>
-          {showGrid ? <Grid width={width} height={height} padding={pad} yTicks={ticks} yScale={yScale} font={font} formatY={formatY} /> : null}
-          <EffectsLayer effects={props.effects} gradient={props.gradient} width={width} height={height}>
-          {geoms.map((g, i) => {
-            const s = allSeries[i]!;
-            return (
-              <SeriesPath key={i} pts={g.line} baseline={baseline} curve={curve} color={s.color} strokeWidth={s.strokeWidth ?? strokeWidth}
-                fill={s.fill ?? fill} fillOpacity={s.fillOpacity ?? 0.35} top={pad.top} entry={entry} progress={progress} duration={duration} />
-            );
-          })}
-          {interactive ? (
-            <Group opacity={active}>
-              <Line p1={p1} p2={p2} color={cursorColor} strokeWidth={1} />
-              <Circle cx={cx} cy={cy} r={8} color={`${allSeries[0]?.color ?? color}55`} />
-              <Circle cx={cx} cy={cy} r={4.5} color={allSeries[0]?.color ?? color} />
-            </Group>
-          ) : null}
-          </EffectsLayer>
-          </ZoomGroup>
-        </Canvas>
-      </GestureDetector>
-    </View>
+      <View style={[{ width, height }, style]}>
+        <GestureDetector gesture={gesture}>
+          <Canvas style={{ width, height, backgroundColor }}>
+            <ZoomGroup>
+              {showGrid ? (
+                <Grid
+                  width={width}
+                  height={height}
+                  padding={pad}
+                  yTicks={ticks}
+                  yScale={yScale}
+                  font={font}
+                  formatY={formatY}
+                />
+              ) : null}
+              <EffectsLayer effects={props.effects} gradient={props.gradient} width={width} height={height}>
+                {geoms.map((g, i) => {
+                  const s = allSeries[i]!;
+                  return (
+                    <SeriesPath
+                      key={i}
+                      pts={g.line}
+                      baseline={baseline}
+                      curve={curve}
+                      color={s.color}
+                      strokeWidth={s.strokeWidth ?? strokeWidth}
+                      fill={s.fill ?? fill}
+                      fillOpacity={s.fillOpacity ?? 0.35}
+                      top={pad.top}
+                      entry={entry}
+                      progress={progress}
+                      duration={duration}
+                    />
+                  );
+                })}
+                {interactive ? (
+                  <Group opacity={active}>
+                    <Line p1={p1} p2={p2} color={cursorColor} strokeWidth={1} />
+                    <Circle cx={cx} cy={cy} r={8} color={`${allSeries[0]?.color ?? color}55`} />
+                    <Circle cx={cx} cy={cy} r={4.5} color={allSeries[0]?.color ?? color} />
+                  </Group>
+                ) : null}
+              </EffectsLayer>
+            </ZoomGroup>
+          </Canvas>
+        </GestureDetector>
+      </View>
     </ChartFrame>
   );
 };
@@ -184,8 +290,16 @@ export type AreaChartProps = Omit<LineChartProps, 'fill'>;
 /** Line chart with gradient fill. */
 export const AreaChart = (props: AreaChartProps) => <LineChart entry="grow" {...props} fill />;
 
-export interface SparklineProps { width: number; height: number; data: number[]; color?: string; strokeWidth?: number; fill?: boolean; gradient?: ChartGradient }
-/** Minimal inline trend line – no grid, no gestures. */
+export interface SparklineProps {
+  width: number;
+  height: number;
+  data: number[];
+  color?: string;
+  strokeWidth?: number;
+  fill?: boolean;
+  gradient?: ChartGradient;
+}
+/** Minimal inline trend line: no grid, no gestures. */
 export const Sparkline = ({ fill = false, ...p }: SparklineProps) => (
   <LineChart {...p} fill={fill} padding={3} showGrid={false} interactive={false} />
 );

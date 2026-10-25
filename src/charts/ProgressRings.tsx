@@ -1,12 +1,25 @@
 import React, { useEffect } from 'react';
 import { EffectsLayer } from '../effects/EffectsLayer';
 import { Canvas, Group, Path } from 'react-native-skia';
-import { Easing, useDerivedValue, useSharedValue, withDelay, withTiming, type SharedValue } from 'react-native-reanimated';
+import {
+  Easing,
+  useDerivedValue,
+  useSharedValue,
+  withDelay,
+  withTiming,
+  type SharedValue,
+} from 'react-native-reanimated';
 import type { BaseChartProps, RingData } from '../types';
 import { arcPath } from '../utils/path';
-import { ChartFrame, ZoomGroup, useHighlight, useSelection, type SelectableProps, type ZoomableProps } from '../interaction';
+import {
+  ChartFrame,
+  ZoomGroup,
+  useHighlight,
+  useSelection,
+  type SelectableProps,
+  type ZoomableProps,
+} from '../interaction';
 import { GestureDetector } from 'react-native-gesture-handler';
-
 
 /** Rings. Selection index = ring index (outer = 0). */
 export interface ProgressRingsProps extends Omit<BaseChartProps, 'padding'>, SelectableProps {
@@ -17,25 +30,76 @@ export interface ProgressRingsProps extends Omit<BaseChartProps, 'padding'>, Sel
   trackOpacity?: number;
 }
 
-const Ring = ({ cx, cy, r, thickness, ring, index, duration, trackOpacity, selected }: { cx: number; cy: number; r: number; thickness: number; ring: RingData; index: number; duration: number; trackOpacity: number; selected: SharedValue<number> }) => {
+const Ring = ({
+  cx,
+  cy,
+  r,
+  thickness,
+  ring,
+  index,
+  duration,
+  trackOpacity,
+  selected,
+}: {
+  cx: number;
+  cy: number;
+  r: number;
+  thickness: number;
+  ring: RingData;
+  index: number;
+  duration: number;
+  trackOpacity: number;
+  selected: SharedValue<number>;
+}) => {
   const opacity = useHighlight(selected, index, 0.3);
-  const sw = useDerivedValue(() => withTiming(selected.value === index ? thickness * 1.2 : thickness, { duration: 200 }));
+  const sw = useDerivedValue(() =>
+    withTiming(selected.value === index ? thickness * 1.2 : thickness, { duration: 200 }),
+  );
   const end = useSharedValue(0);
   useEffect(() => {
-    end.value = withDelay(index * 120, withTiming(Math.min(1, Math.max(0, ring.progress)), { duration, easing: Easing.out(Easing.exp) }));
+    end.value = withDelay(
+      index * 120,
+      withTiming(Math.min(1, Math.max(0, ring.progress)), { duration, easing: Easing.out(Easing.exp) }),
+    );
   }, [ring.progress, index, duration, end]);
   const path = arcPath(cx, cy, r, -90, 359.99);
   return (
     <Group opacity={opacity}>
-      <Path path={path} style="stroke" strokeWidth={sw} color={ring.backgroundColor ?? ring.color} opacity={ring.backgroundColor ? 1 : trackOpacity} />
-      <Path path={path} style="stroke" strokeWidth={sw} strokeCap="round" color={ring.color} start={0} end={end} />
+      <Path
+        path={path}
+        style="stroke"
+        strokeWidth={sw}
+        color={ring.backgroundColor ?? ring.color}
+        opacity={ring.backgroundColor ? 1 : trackOpacity}
+      />
+      <Path
+        path={path}
+        style="stroke"
+        strokeWidth={sw}
+        strokeCap="round"
+        color={ring.color}
+        start={0}
+        end={end}
+      />
     </Group>
   );
 };
 
 /** Apple-Activity-style concentric progress rings. */
 export const ProgressRings = (props: ProgressRingsProps) => {
-  const { effects, gradient, width, height, style, data, thickness = 18, gap = 4, trackOpacity = 0.2, animation, backgroundColor } = props;
+  const {
+    effects,
+    gradient,
+    width,
+    height,
+    style,
+    data,
+    thickness = 18,
+    gap = 4,
+    trackOpacity = 0.2,
+    animation,
+    backgroundColor,
+  } = props;
   const cx = width / 2;
   const cy = height / 2;
   const outer = Math.min(width, height) / 2 - thickness / 2;
@@ -48,13 +112,24 @@ export const ProgressRings = (props: ProgressRingsProps) => {
   });
   return (
     <GestureDetector gesture={gesture}>
-    <Canvas style={[{ width, height, backgroundColor }, style]}>
-      <EffectsLayer effects={effects} gradient={gradient} width={width} height={height}>
-      {data.map((ring, i) => (
-        <Ring key={i} cx={cx} cy={cy} r={outer - i * (thickness + gap)} thickness={thickness} ring={ring} index={i} duration={animation?.duration ?? 1000} trackOpacity={trackOpacity} selected={selected} />
-      ))}
-      </EffectsLayer>
-    </Canvas>
+      <Canvas style={[{ width, height, backgroundColor }, style]}>
+        <EffectsLayer effects={effects} gradient={gradient} width={width} height={height}>
+          {data.map((ring, i) => (
+            <Ring
+              key={i}
+              cx={cx}
+              cy={cy}
+              r={outer - i * (thickness + gap)}
+              thickness={thickness}
+              ring={ring}
+              index={i}
+              duration={animation?.duration ?? 1000}
+              trackOpacity={trackOpacity}
+              selected={selected}
+            />
+          ))}
+        </EffectsLayer>
+      </Canvas>
     </GestureDetector>
   );
 };
