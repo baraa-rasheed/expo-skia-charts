@@ -1,0 +1,47 @@
+{
+  "name": "expo-skia-charts",
+  "version": "0.1.0",
+  "description": "GPU-accelerated, animated charts for React Native & Expo, rendered with @shopify/react-native-skia and animated with Reanimated worklets. A modern successor to @rainbow-me/react-native-animated-charts.",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "react-native": "src/index.ts",
+  "source": "src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./build/index.d.ts",
+      "react-native": "./src/index.ts",
+      "default": "./build/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": ["build", "src", "!**/__tests__"],
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf build",
+    "prepare": "npm run build"
+  },
+  "keywords": ["react-native", "expo", "skia", "charts", "reanimated", "line-chart", "candlestick", "pie-chart", "gauge", "animated-charts"],
+  "repository": { "type": "git", "url": "git+https://github.com/baraa-rasheed/expo-skia-charts.git" },
+  "bugs": { "url": "https://github.com/baraa-rasheed/expo-skia-charts/issues" },
+  "homepage": "https://github.com/baraa-rasheed/expo-skia-charts#readme",
+  "author": "Baraa Rasheed (https://github.com/baraa-rasheed)",
+  "license": "MIT",
+  "peerDependencies": {
+    "@shopify/react-native-skia": ">=2.0.0",
+    "react": "*",
+    "react-native": "*",
+    "react-native-gesture-handler": ">=2.20.0",
+    "react-native-reanimated": ">=3.16.0"
+  },
+  "devDependencies": {
+    "@shopify/react-native-skia": "^2.14.0",
+    "@types/react": "~19.1.0",
+    "react": "19.1.0",
+    "react-native": "0.81.0",
+    "react-native-gesture-handler": "^2.28.0",
+    "react-native-reanimated": "^4.1.0",
+    "typescript": "~5.9.0"
+  }
+}
