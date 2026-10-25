@@ -101,8 +101,8 @@ export const BarChart = (props: BarChartProps) => {
 
   return (
     <Canvas style={[{ width, height, backgroundColor }, style]}>
-      <EffectsLayer effects={props.effects} width={width} height={height}>
       {showGrid && !horizontal ? <Grid width={width} height={height} padding={pad} yTicks={ticks} yScale={valueScale} font={font} formatY={formatY} xLabels={xLabels} /> : null}
+      <EffectsLayer effects={props.effects} gradient={props.gradient} width={width} height={height}>
       <Group>
         {bars.map((g, i) => <AnimatedBar key={i} g={g} progress={progress} radius={radius} count={count} stagger={stagger} />)}
       </Group>

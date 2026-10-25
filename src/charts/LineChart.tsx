@@ -1,3 +1,4 @@
+import type { ChartGradient } from '../effects/EffectsLayer';
 import React, { useMemo } from 'react';
 import { EffectsLayer } from '../effects/EffectsLayer';
 import { View } from 'react-native';
@@ -141,8 +142,8 @@ export const LineChart = (props: LineChartProps) => {
     <View style={[{ width, height }, style]}>
       <GestureDetector gesture={gesture}>
         <Canvas style={{ width, height, backgroundColor }}>
-          <EffectsLayer effects={props.effects} width={width} height={height}>
           {showGrid ? <Grid width={width} height={height} padding={pad} yTicks={ticks} yScale={yScale} font={font} formatY={formatY} /> : null}
+          <EffectsLayer effects={props.effects} gradient={props.gradient} width={width} height={height}>
           {geoms.map((g, i) => {
             const s = allSeries[i]!;
             return (
@@ -168,7 +169,7 @@ export type AreaChartProps = Omit<LineChartProps, 'fill'>;
 /** Line chart with gradient fill. */
 export const AreaChart = (props: AreaChartProps) => <LineChart entry="grow" {...props} fill />;
 
-export interface SparklineProps { width: number; height: number; data: number[]; color?: string; strokeWidth?: number; fill?: boolean }
+export interface SparklineProps { width: number; height: number; data: number[]; color?: string; strokeWidth?: number; fill?: boolean; gradient?: ChartGradient }
 /** Minimal inline trend line – no grid, no gestures. */
 export const Sparkline = ({ fill = false, ...p }: SparklineProps) => (
   <LineChart {...p} fill={fill} padding={3} showGrid={false} interactive={false} />

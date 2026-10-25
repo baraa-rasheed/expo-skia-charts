@@ -53,7 +53,7 @@ const CandleShape = ({ g, progress, variant }: { g: CG; progress: SharedValue<nu
 };
 
 /** Candlestick / OHLC chart with crosshair scrubbing. */
-export const CandlestickChart = ({ effects, width, height, style, data, positiveColor = '#26A69A', negativeColor = '#EF5350', variant = 'candle', showGrid = true, formatY, font, animation, backgroundColor, padding, interactive = true, onScrub }: CandlestickChartProps) => {
+export const CandlestickChart = ({ effects, gradient, width, height, style, data, positiveColor = '#26A69A', negativeColor = '#EF5350', variant = 'candle', showGrid = true, formatY, font, animation, backgroundColor, padding, interactive = true, onScrub }: CandlestickChartProps) => {
   const pad = resolvePadding(padding, 12);
   if (font) pad.left = Math.max(pad.left, 40);
   const { candles, yS, ticks } = useMemo(() => {
@@ -96,8 +96,8 @@ export const CandlestickChart = ({ effects, width, height, style, data, positive
     <View style={[{ width, height }, style]}>
       <GestureDetector gesture={gesture}>
         <Canvas style={{ width, height, backgroundColor }}>
-          <EffectsLayer effects={effects} width={width} height={height}>
           {showGrid ? <Grid width={width} height={height} padding={pad} yTicks={ticks} yScale={yS} font={font} formatY={formatY} /> : null}
+          <EffectsLayer effects={effects} gradient={gradient} width={width} height={height}>
           {candles.map((g, i) => <CandleShape key={i} g={g} progress={progress} variant={variant} />)}
           <Line p1={p1} p2={p2} color="#888" strokeWidth={1} opacity={active} />
           </EffectsLayer>

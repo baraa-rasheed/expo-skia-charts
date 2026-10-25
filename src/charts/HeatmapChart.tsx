@@ -38,7 +38,7 @@ const Cell = ({ x, y, w, h, r, color, progress, delay }: { x: number; y: number;
 };
 
 /** Matrix heatmap (calendar / correlation style) with diagonal fade-in. */
-export const HeatmapChart = ({ effects, width, height, style, data, colors = ['#EBEDF0', '#216E39'], gap = 2, radius = 2, rowLabels, columnLabels, labelColor = '#888', font, animation, backgroundColor, padding }: HeatmapChartProps) => {
+export const HeatmapChart = ({ effects, gradient, width, height, style, data, colors = ['#EBEDF0', '#216E39'], gap = 2, radius = 2, rowLabels, columnLabels, labelColor = '#888', font, animation, backgroundColor, padding }: HeatmapChartProps) => {
   const pad = resolvePadding(padding, 4);
   if (font && rowLabels) pad.left = Math.max(pad.left, 32);
   if (font && columnLabels) pad.top = Math.max(pad.top, 16);
@@ -56,7 +56,7 @@ export const HeatmapChart = ({ effects, width, height, style, data, colors = ['#
   const progress = useEntryProgress(animation ?? { duration: 900 }, [cells]);
   return (
     <Canvas style={[{ width, height, backgroundColor }, style]}>
-      <EffectsLayer effects={effects} width={width} height={height}>
+      <EffectsLayer effects={effects} gradient={gradient} width={width} height={height}>
       <Group>{cells.map((c, i) => <Cell key={i} {...c} r={radius} progress={progress} />)}</Group>
       {font && rowLabels ? rowLabels.map((l, i) => <Text key={`r${i}`} x={2} y={pad.top + i * ch + ch / 2 + font.getSize() / 3} text={l} font={font} color={labelColor} />) : null}
       {font && columnLabels ? columnLabels.map((l, i) => <Text key={`c${i}`} x={pad.left + i * cw + cw / 2 - font.measureText(l).width / 2} y={pad.top - 4} text={l} font={font} color={labelColor} />) : null}
