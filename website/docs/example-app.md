@@ -17,10 +17,11 @@ npx expo run:ios   # or run:android. Skia v3 needs a dev build.
 - **Portfolio**: total balance and today's change, then a hero **AAPL** line chart with a native segmented range control (1D / 1W / 1M / 6M / 1Y). The range changes the number of points.
 - **Watchlist**: rows with a ticker and name, a `Sparkline`, the price and a green or red change badge.
 - **Markets** (BTC-USD candlesticks, NVDA area, MSFT volume) and **Insights** (allocation, AMZN revenue, SPY returns) are swipeable **parallax carousels**. Pages snap natively. The chart lags behind the header and fades and scales at the edges, and animated page dots follow your finger. Each carousel auto-advances with a smooth animated scroll every 5 s. It pauses for 8 s after you touch it and stops while the sheet is open.
-- **ETH-USD activity** (heatmap) is embedded full width with no background card.
-- **Discover**: a staggered two-column masonry grid with Holdings (donut), Risk / Return (scatter), GOOGL factors (radar), Fear & Greed (gauge), Goals (rings) and Mega caps (bubble).
+- **Breakdown**: the Holdings donut is shown full width.
+- **Discover**: a horizontal strip in the style of Apple Stocks' Top Movers. Tiles peek in from the edge and snap one at a time. The tiles are Goals (rings), GOOGL factors (radar), Risk / Return (scatter) and Mega caps (bubble). The tile nearest the centre scales up, and the others shrink and fade.
+- **Fear & Greed** (gauge) and **ETH-USD activity** (heatmap) are embedded full width at the bottom with no background card. There is no two-column grid.
 - Blocks fade in one after another (Reanimated `FadeInDown`).
-- Charts stay interactive in place (scrubbing, crosshair).
+- Charts stay interactive in place. You can scrub or use the crosshair, tap to select and highlight bars, slices, points, cells and rings, pinch to zoom, use two fingers to pan, and double-tap to reset.
 - Data comes from a seeded PRNG, so a chart and its preview in the sheet always match.
 
 ## Customize sheet
@@ -32,6 +33,7 @@ The sheet follows iOS Settings patterns, with inset-grouped sections, native swi
 - a header with the chart type, title and a glass **Done** button;
 - a live preview;
 - **Appearance**: colour swatches, a **Gradient** segmented control (None / Linear / Radial / Sweep) and an end colour (uses the `gradient` prop);
+- **Interaction** switches per chart type: *Tap to select*, *Pinch to zoom*, *Long-press to scrub* and *Scrubbing / Crosshair*;
 - **Data**: a glass −/+ stepper for the point count, and **Randomize**;
 - **Options**: chart-specific switches such as grid, smooth curve, scrubbing, horizontal, 100% stacked, donut, needle and OHLC bars;
 - **GPU Effects**: drop shadow, neon glow, an SkSL shader segment control and a colour filter segment control;

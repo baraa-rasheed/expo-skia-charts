@@ -58,3 +58,10 @@ export function Revenue({ data }: { data: number[] }) {
 - Don't pass strings for numeric values, or `undefined` holes in `data`.
 - Don't use `glow: true`. `glow` is a number (blur sigma). `shadow` accepts `true` or an object.
 - Don't import from `expo-skia-charts/src/...` or from build paths.
+
+## Interactivity
+
+- Scrubbing: `interactive` (default true) and `onScrub` on Line, Area and Candlestick. Inside scroll views, use `scrubActivation="longPress"`.
+- Selection: `selectable`, `selectedIndex` and `onSelect(index | null)` on Bar, Pie/Donut, Scatter, Bubble, Heatmap and ProgressRings. Unselected marks dim.
+- Zoom: `zoom` (`true` or `{ min, max, doubleTap }`) on axis charts. Pinch to zoom, two-finger pan, double-tap to toggle 2x or reset. Touches are mapped back to chart coordinates, so selection and scrubbing still work while zoomed.
+- Custom charts: `ChartFrame`, `ZoomGroup`, `useSelection(props, hitTestWorklet)` and `useHighlight(selected, index)`.

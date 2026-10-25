@@ -91,3 +91,10 @@ const neon: ChartEffects = { glow: 6, shadow: true, clipReveal: 800 };
 ```
 
 See [Charts](./charts.md) for each component's full props, [Gradients](./gradients.md), [GPU effects](./effects.md) and the [API reference](./api.md).
+
+## Interactivity
+
+- Scrubbing: `interactive` (default true) and `onScrub` on Line, Area and Candlestick. Inside scroll views, use `scrubActivation="longPress"`.
+- Selection: `selectable`, `selectedIndex` and `onSelect(index | null)` on Bar, Pie/Donut, Scatter, Bubble, Heatmap and ProgressRings. Unselected marks dim.
+- Zoom: `zoom` (`true` or `{ min, max, doubleTap }`) on axis charts. Pinch to zoom, two-finger pan, double-tap to toggle 2x or reset. Touches are mapped back to chart coordinates, so selection and scrubbing still work while zoomed.
+- Custom charts: `ChartFrame`, `ZoomGroup`, `useSelection(props, hitTestWorklet)` and `useHighlight(selected, index)`.
