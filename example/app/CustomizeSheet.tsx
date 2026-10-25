@@ -5,6 +5,7 @@ import * as Haptics from 'expo-haptics';
 import { SymbolView, type SymbolViewProps } from 'expo-symbols';
 import type { ColorFilterPreset, ShaderPreset } from 'react-native-skia-chart';
 import { CHARTS, type GradientKind } from './charts';
+import { ChartView } from './ChartCard';
 import { Segmented } from './Segmented';
 import { useChartStore } from './store';
 import { palette, theme } from './theme';
@@ -66,24 +67,16 @@ const Swatches = ({ value, onChange }: { value: string; onChange: (c: string) =>
   </View>
 );
 
-/** Native-feeling settings sheet (formSheet with detents). Edits apply live to the chart on the home screen, which stays visible above the sheet, so there is no in-sheet preview. The background is a native translucent blur. */
+/** Native-feeling settings sheet (formSheet with detents). Edits apply live to the chart on the home screen. */
 export const CustomizeSheet = ({ id, onDone }: { id: string; onDone: () => void }) => {
   const { configs, update, reset } = useChartStore();
-  const { height } = useWindowDimensions();
+  const { width } = useWindowDimensions();
   const def = CHARTS.find((d) => d.id === id);
   const cfg = configs[id];
   if (!def || !cfg) return null;
   const set = update.bind(null, id);
   return (
-    // No `flex: 1` on the sheet's root: a formSheet with fractional detents gives its content no fixed
-    // height, so flex children measure to 0 and nothing renders. Size from content instead and let the
-    // blur fill at least the full screen height so it covers the largest detent.
-    <View style={{ minHeight: height }}>
-      {/* Native translucent sheet material: the home screen (and its live chart) shows through the blur. */}
-      {Platform.OS === 'ios'
-        ? <BlurView intensity={80} tint="systemChromeMaterialDark" style={StyleSheet.absoluteFill} />
-        : <View style={[StyleSheet.absoluteFill, { backgroundColor: theme.sheet }]} />}
-    <ScrollView style={{ maxHeight: height }} contentContainerStyle={styles.body} nestedScrollEnabled>
+    <ScrollView style={styles.flex} contentContainerStyle={styles.body} nestedScrollEnabled>
       <View style={styles.header}>
         <View style={styles.flex}>
           <Text style={styles.kind}>{def.kind}</Text>
@@ -93,6 +86,7 @@ export const CustomizeSheet = ({ id, onDone }: { id: string; onDone: () => void 
         <Glass label="Done" onPress={onDone}><Text style={styles.done}>Done</Text></Glass>
       </View>
 
+      <View style={styles.preview}><ChartView def={def} cfg={cfg} width={width - 32} height={170} /></View>
 
       <Section title="Appearance">
         <Stacked label="Colour"><Swatches value={cfg.color} onChange={(color) => set({ color })} /></Stacked>
@@ -149,20 +143,20 @@ export const CustomizeSheet = ({ id, onDone }: { id: string; onDone: () => void 
         </Pressable>
       </Section>
     </ScrollView>
-    </View>
   );
 };
 
 const styles = StyleSheet.create({
   flex: { flex: 1 },
   body: { padding: 16, paddingTop: 22, paddingBottom: 48 },
-  header: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 18 },
+  header: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   kind: { color: theme.accent, fontSize: 12, fontWeight: '700', letterSpacing: 0.6, textTransform: 'uppercase' },
   title: { color: theme.text, fontSize: 26, fontWeight: '800', letterSpacing: -0.4 },
   sub: { color: theme.sub, fontSize: 14 },
   done: { color: theme.text, fontSize: 16, fontWeight: '600', paddingHorizontal: 18, paddingVertical: 9 },
   glassWrap: { borderRadius: 999, overflow: 'hidden', borderWidth: StyleSheet.hairlineWidth, borderColor: 'rgba(255,255,255,0.18)' },
   glass: { alignItems: 'center', justifyContent: 'center', backgroundColor: Platform.OS === 'android' ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.04)' },
+  preview: { alignItems: 'center', marginVertical: 18 },
   section: { marginTop: 22 },
   sectionTitle: { color: theme.sub, fontSize: 13, marginLeft: 16, marginBottom: 7 },
   footer: { color: theme.sub, fontSize: 13, marginLeft: 16, marginTop: 7 },

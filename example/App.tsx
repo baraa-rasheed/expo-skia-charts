@@ -173,7 +173,9 @@ export default function App() {
                   headerLargeTitle: true,
                   // Transparent large header so the aurora shows through; it blurs once collapsed.
                   headerTransparent: true,
-                  headerBlurEffect: 'systemChromeMaterialDark',
+                  // Soft frosted material once the title collapses, never an opaque bar.
+                  headerBlurEffect: 'systemUltraThinMaterialDark',
+                  headerStyle: { backgroundColor: 'transparent' },
                   headerLargeTitleShadowVisible: false,
                   headerShadowVisible: false,
                   headerLargeStyle: { backgroundColor: 'transparent' },
@@ -192,8 +194,7 @@ export default function App() {
                   sheetGrabberVisible: true,
                   sheetCornerRadius: 28,
                   sheetExpandsWhenScrolledToEdge: true,
-                  // Transparent so the sheet's BlurView material shows the home screen through it.
-                  contentStyle: { backgroundColor: Platform.OS === 'ios' ? 'transparent' : theme.sheet },
+                  contentStyle: { backgroundColor: theme.sheet },
                 }}
               />
             </Stack.Navigator>
