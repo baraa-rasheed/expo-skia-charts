@@ -29,7 +29,28 @@ export interface GaugeChartProps extends Omit<BaseChartProps, 'padding' | 'gradi
 }
 
 /** Speedometer-style gauge. Value changes animate the arc and needle on the UI thread. */
-export const GaugeChart = ({ effects, width, height, style, value, min = 0, max = 100, sweep = 240, thickness = 16, color = '#6C5CE7', gradient, trackColor = 'rgba(128,128,128,0.2)', showNeedle = true, needleColor = '#333', formatValue = (v) => `${Math.round(v)}`, valueFont, valueColor = '#222', font, animation, backgroundColor }: GaugeChartProps) => {
+export const GaugeChart = ({
+  effects,
+  width,
+  height,
+  style,
+  value,
+  min = 0,
+  max = 100,
+  sweep = 240,
+  thickness = 16,
+  color = '#6C5CE7',
+  gradient,
+  trackColor = 'rgba(128,128,128,0.2)',
+  showNeedle = true,
+  needleColor = '#333',
+  formatValue = (v) => `${Math.round(v)}`,
+  valueFont,
+  valueColor = '#222',
+  font,
+  animation,
+  backgroundColor,
+}: GaugeChartProps) => {
   const cx = width / 2;
   const cy = height / 2 + (sweep <= 180 ? height / 4 : 0);
   const r = Math.min(width, sweep <= 180 ? height * 1.5 : height) / 2 - thickness;
@@ -41,24 +62,50 @@ export const GaugeChart = ({ effects, width, height, style, value, min = 0, max 
   }, [target, animation?.duration, t]);
   const track = arcPath(cx, cy, r, start, sweep);
   const angle = useDerivedValue(() => ((start + sweep * t.value) * Math.PI) / 180);
-  const tip = useDerivedValue(() => vec(cx + Math.cos(angle.value) * (r - thickness), cy + Math.sin(angle.value) * (r - thickness)));
+  const tip = useDerivedValue(() =>
+    vec(cx + Math.cos(angle.value) * (r - thickness), cy + Math.sin(angle.value) * (r - thickness)),
+  );
   const stops = Array.isArray(gradient) ? { colors: gradient, positions: undefined } : gradient;
   const f = valueFont ?? font;
   const label = formatValue(value);
   return (
     <Canvas style={[{ width, height, backgroundColor }, style]}>
       <EffectsLayer effects={effects} width={width} height={height}>
-      <Path path={track} style="stroke" strokeWidth={thickness} strokeCap="round" color={trackColor} />
-      <Path path={track} style="stroke" strokeWidth={thickness} strokeCap="round" color={color} start={0} end={t}>
-        {stops && stops.colors.length >= 2 ? <SweepGradient c={vec(cx, cy)} colors={stops.colors} positions={stops.positions} start={start} end={start + sweep} /> : null}
-      </Path>
-      {showNeedle ? (
-        <Group>
-          <Line p1={vec(cx, cy)} p2={tip} color={needleColor} strokeWidth={3} strokeCap="round" />
-          <Circle cx={cx} cy={cy} r={6} color={needleColor} />
-        </Group>
-      ) : null}
-      {f ? <Text x={cx - f.measureText(label).width / 2} y={cy + r * 0.55} text={label} font={f} color={valueColor} /> : null}
+        <Path path={track} style="stroke" strokeWidth={thickness} strokeCap="round" color={trackColor} />
+        <Path
+          path={track}
+          style="stroke"
+          strokeWidth={thickness}
+          strokeCap="round"
+          color={color}
+          start={0}
+          end={t}
+        >
+          {stops && stops.colors.length >= 2 ? (
+            <SweepGradient
+              c={vec(cx, cy)}
+              colors={stops.colors}
+              positions={stops.positions}
+              start={start}
+              end={start + sweep}
+            />
+          ) : null}
+        </Path>
+        {showNeedle ? (
+          <Group>
+            <Line p1={vec(cx, cy)} p2={tip} color={needleColor} strokeWidth={3} strokeCap="round" />
+            <Circle cx={cx} cy={cy} r={6} color={needleColor} />
+          </Group>
+        ) : null}
+        {f ? (
+          <Text
+            x={cx - f.measureText(label).width / 2}
+            y={cy + r * 0.55}
+            text={label}
+            font={f}
+            color={valueColor}
+          />
+        ) : null}
       </EffectsLayer>
     </Canvas>
   );

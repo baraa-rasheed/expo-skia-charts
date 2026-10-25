@@ -7,9 +7,15 @@ import { resolvePadding } from '../utils/padding';
 import { extent, linearScale, niceTicks } from '../utils/scale';
 import { useEntryProgress } from '../hooks/useEntryProgress';
 import { Grid } from './Grid';
-import { ChartFrame, ZoomGroup, useHighlight, useSelection, type SelectableProps, type ZoomableProps } from '../interaction';
+import {
+  ChartFrame,
+  ZoomGroup,
+  useHighlight,
+  useSelection,
+  type SelectableProps,
+  type ZoomableProps,
+} from '../interaction';
 import { GestureDetector } from 'react-native-gesture-handler';
-
 
 /** Bars. Selection index = category (slot) index. */
 export interface BarChartProps extends BaseChartProps, SelectableProps, ZoomableProps {
@@ -33,9 +39,32 @@ export interface BarChartProps extends BaseChartProps, SelectableProps, Zoomable
   stagger?: number;
 }
 
-interface BarGeom { x: number; y: number; w: number; h: number; color: string; order: number; horizontal: boolean; base: number }
+interface BarGeom {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  color: string;
+  order: number;
+  horizontal: boolean;
+  base: number;
+}
 
-const AnimatedBar = ({ g, progress, radius, count, stagger, selected }: { g: BarGeom; progress: SharedValue<number>; radius: number; count: number; stagger: number; selected: SharedValue<number> }) => {
+const AnimatedBar = ({
+  g,
+  progress,
+  radius,
+  count,
+  stagger,
+  selected,
+}: {
+  g: BarGeom;
+  progress: SharedValue<number>;
+  radius: number;
+  count: number;
+  stagger: number;
+  selected: SharedValue<number>;
+}) => {
   const opacity = useHighlight(selected, g.order);
   const t = useDerivedValue(() => {
     const s = (g.order / Math.max(1, count)) * stagger;
@@ -51,10 +80,30 @@ const AnimatedBar = ({ g, progress, radius, count, stagger, selected }: { g: Bar
 
 /** Vertical / horizontal, grouped or stacked bar chart with staggered grow-in. */
 export const BarChart = (props: BarChartProps) => {
-  const { width, height, style, animation, font, backgroundColor, data, color = '#00B894', series, stacked = false, horizontal = false,
-    labels, barWidthRatio = 0.7, radius = 4, showGrid = true, formatY, stagger = 0.4 } = props;
+  const {
+    width,
+    height,
+    style,
+    animation,
+    font,
+    backgroundColor,
+    data,
+    color = '#00B894',
+    series,
+    stacked = false,
+    horizontal = false,
+    labels,
+    barWidthRatio = 0.7,
+    radius = 4,
+    showGrid = true,
+    formatY,
+    stagger = 0.4,
+  } = props;
   const pad = resolvePadding(props.padding, 16);
-  if (font) { pad.left = Math.max(pad.left, 36); pad.bottom = Math.max(pad.bottom, 20); }
+  if (font) {
+    pad.left = Math.max(pad.left, 36);
+    pad.bottom = Math.max(pad.bottom, 20);
+  }
   const all: BarSeries[] = useMemo(() => series ?? (data ? [{ data, color }] : []), [series, data, color]);
 
   const { bars, ticks, valueScale, xLabels, start, slot } = useMemo(() => {
@@ -67,8 +116,12 @@ export const BarChart = (props: BarChartProps) => {
     }
     const vals = stacked ? [...totals, ...negTotals] : all.flatMap((s) => s.data);
     const vd = extent(vals, true);
-    const along: [number, number] = horizontal ? [pad.top, height - pad.bottom] : [pad.left, width - pad.right];
-    const vRange: [number, number] = horizontal ? [pad.left, width - pad.right] : [height - pad.bottom, pad.top];
+    const along: [number, number] = horizontal
+      ? [pad.top, height - pad.bottom]
+      : [pad.left, width - pad.right];
+    const vRange: [number, number] = horizontal
+      ? [pad.left, width - pad.right]
+      : [height - pad.bottom, pad.top];
     const vS = linearScale(vd, vRange);
     const slot = (along[1] - along[0]) / Math.max(1, n);
     const bw = slot * barWidthRatio;
@@ -87,22 +140,72 @@ export const BarChart = (props: BarChartProps) => {
         let thick: number;
         let offset: number;
         if (stacked) {
-          if (v >= 0) { a0 = posAcc; a1 = posAcc + v; posAcc = a1; } else { a0 = negAcc; a1 = negAcc + v; negAcc = a1; }
-          thick = bw; offset = slotStart;
+          if (v >= 0) {
+            a0 = posAcc;
+            a1 = posAcc + v;
+            posAcc = a1;
+          } else {
+            a0 = negAcc;
+            a1 = negAcc + v;
+            negAcc = a1;
+          }
+          thick = bw;
+          offset = slotStart;
         } else {
-          a0 = 0; a1 = v; thick = bw / all.length; offset = slotStart + thick * si;
+          a0 = 0;
+          a1 = v;
+          thick = bw / all.length;
+          offset = slotStart + thick * si;
         }
         const p0 = vS(a0);
         const p1 = vS(a1);
         if (horizontal) {
-          out.push({ x: Math.min(p0, p1), y: offset, w: Math.abs(p1 - p0), h: thick * 0.92, color: s.color, order: i, horizontal, base: zero });
+          out.push({
+            x: Math.min(p0, p1),
+            y: offset,
+            w: Math.abs(p1 - p0),
+            h: thick * 0.92,
+            color: s.color,
+            order: i,
+            horizontal,
+            base: zero,
+          });
         } else {
-          out.push({ x: offset, y: Math.min(p0, p1), w: thick * 0.92, h: Math.abs(p1 - p0), color: s.color, order: i, horizontal, base: zero });
+          out.push({
+            x: offset,
+            y: Math.min(p0, p1),
+            w: thick * 0.92,
+            h: Math.abs(p1 - p0),
+            color: s.color,
+            order: i,
+            horizontal,
+            base: zero,
+          });
         }
       });
     }
-    return { bars: out, ticks: niceTicks(vd, 4), valueScale: vS, xLabels: xl, count: n, start: along[0], slot };
-  }, [all, stacked, horizontal, width, height, pad.left, pad.right, pad.top, pad.bottom, barWidthRatio, labels]);
+    return {
+      bars: out,
+      ticks: niceTicks(vd, 4),
+      valueScale: vS,
+      xLabels: xl,
+      count: n,
+      start: along[0],
+      slot,
+    };
+  }, [
+    all,
+    stacked,
+    horizontal,
+    width,
+    height,
+    pad.left,
+    pad.right,
+    pad.top,
+    pad.bottom,
+    barWidthRatio,
+    labels,
+  ]);
 
   const progress = useEntryProgress(animation ?? { duration: 800 }, [bars]);
   const count = Math.max(1, ...all.map((s) => s.data.length));
@@ -114,18 +217,39 @@ export const BarChart = (props: BarChartProps) => {
 
   return (
     <ChartFrame zoom={props.zoom} width={width} height={height}>
-    <GestureDetector gesture={gesture}>
-    <Canvas style={[{ width, height, backgroundColor }, style]}>
-      <ZoomGroup>
-      {showGrid && !horizontal ? <Grid width={width} height={height} padding={pad} yTicks={ticks} yScale={valueScale} font={font} formatY={formatY} xLabels={xLabels} /> : null}
-      <EffectsLayer effects={props.effects} gradient={props.gradient} width={width} height={height}>
-      <Group>
-        {bars.map((g, i) => <AnimatedBar key={i} g={g} progress={progress} radius={radius} count={count} stagger={stagger} selected={selected} />)}
-      </Group>
-      </EffectsLayer>
-      </ZoomGroup>
-    </Canvas>
-    </GestureDetector>
+      <GestureDetector gesture={gesture}>
+        <Canvas style={[{ width, height, backgroundColor }, style]}>
+          <ZoomGroup>
+            {showGrid && !horizontal ? (
+              <Grid
+                width={width}
+                height={height}
+                padding={pad}
+                yTicks={ticks}
+                yScale={valueScale}
+                font={font}
+                formatY={formatY}
+                xLabels={xLabels}
+              />
+            ) : null}
+            <EffectsLayer effects={props.effects} gradient={props.gradient} width={width} height={height}>
+              <Group>
+                {bars.map((g, i) => (
+                  <AnimatedBar
+                    key={i}
+                    g={g}
+                    progress={progress}
+                    radius={radius}
+                    count={count}
+                    stagger={stagger}
+                    selected={selected}
+                  />
+                ))}
+              </Group>
+            </EffectsLayer>
+          </ZoomGroup>
+        </Canvas>
+      </GestureDetector>
     </ChartFrame>
   );
 };
@@ -133,7 +257,10 @@ export const BarChart = (props: BarChartProps) => {
 export type StackedBarChartProps = Omit<BarChartProps, 'stacked'>;
 export const StackedBarChart = (p: StackedBarChartProps) => <BarChart {...p} stacked />;
 
-export interface HistogramProps extends Omit<BarChartProps, 'data' | 'series' | 'labels'> { values: number[]; bins?: number }
+export interface HistogramProps extends Omit<BarChartProps, 'data' | 'series' | 'labels'> {
+  values: number[];
+  bins?: number;
+}
 /** Bins raw values and renders them as bars. */
 export const Histogram = ({ values, bins = 10, ...rest }: HistogramProps) => {
   const counts = useMemo(() => {
