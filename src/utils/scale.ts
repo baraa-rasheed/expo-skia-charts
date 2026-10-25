@@ -1,4 +1,7 @@
-export interface Domain { min: number; max: number }
+export interface Domain {
+  min: number;
+  max: number;
+}
 
 export const extent = (values: readonly number[], includeZero = false): Domain => {
   let min = Infinity;
