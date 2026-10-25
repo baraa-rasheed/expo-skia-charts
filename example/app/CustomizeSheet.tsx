@@ -1,5 +1,5 @@
 import React from 'react';
-import { Platform, Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
+import { Platform, Pressable, ScrollView, StyleSheet, Switch, Text, View, useWindowDimensions } from 'react-native';
 import { BlurView } from 'expo-blur';
 import * as Haptics from 'expo-haptics';
 import { SymbolView, type SymbolViewProps } from 'expo-symbols';
@@ -69,17 +69,21 @@ const Swatches = ({ value, onChange }: { value: string; onChange: (c: string) =>
 /** Native-feeling settings sheet (formSheet with detents). Edits apply live to the chart on the home screen, which stays visible above the sheet, so there is no in-sheet preview. The background is a native translucent blur. */
 export const CustomizeSheet = ({ id, onDone }: { id: string; onDone: () => void }) => {
   const { configs, update, reset } = useChartStore();
+  const { height } = useWindowDimensions();
   const def = CHARTS.find((d) => d.id === id);
   const cfg = configs[id];
   if (!def || !cfg) return null;
   const set = update.bind(null, id);
   return (
-    <View style={styles.flex}>
+    // No `flex: 1` on the sheet's root: a formSheet with fractional detents gives its content no fixed
+    // height, so flex children measure to 0 and nothing renders. Size from content instead and let the
+    // blur fill at least the full screen height so it covers the largest detent.
+    <View style={{ minHeight: height }}>
       {/* Native translucent sheet material: the home screen (and its live chart) shows through the blur. */}
       {Platform.OS === 'ios'
         ? <BlurView intensity={80} tint="systemChromeMaterialDark" style={StyleSheet.absoluteFill} />
         : <View style={[StyleSheet.absoluteFill, { backgroundColor: theme.sheet }]} />}
-    <ScrollView style={styles.flex} contentContainerStyle={styles.body} nestedScrollEnabled>
+    <ScrollView style={{ maxHeight: height }} contentContainerStyle={styles.body} nestedScrollEnabled>
       <View style={styles.header}>
         <View style={styles.flex}>
           <Text style={styles.kind}>{def.kind}</Text>

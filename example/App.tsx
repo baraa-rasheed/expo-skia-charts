@@ -100,11 +100,15 @@ function HomeScreen({ navigation }: NativeStackScreenProps<RootStackParamList, '
 
   return (
     <View style={styles.flex}>
-      <Aurora width={width} height={Math.min(520, height * 0.6)} />
-      {/* `automatic` lets the iOS large title collapse as the list scrolls. */}
+      {/* The ScrollView must be the screen's first native subview: UIKit only links the large title to the
+          first scroll view it finds, so anything rendered before it (like the aurora) stops the collapse. */}
       <ScrollView ref={scrollRef} onScroll={onScroll} scrollEventThrottle={16} contentInsetAdjustmentBehavior="automatic" style={styles.flex}
         // Extra room at the bottom so even the last chart can be lifted above the sheet.
         contentContainerStyle={[styles.body, { paddingBottom: height * SHEET_DETENT }]}>
+        {/* Aurora lives inside the scroll content, pulled up behind the transparent large header. */}
+        <View pointerEvents="none" style={{ position: 'absolute', top: -(insets.top + BAR + 60), left: 0, width, height: Math.min(520, height * 0.6) }}>
+          <Aurora width={width} height={Math.min(520, height * 0.6)} />
+        </View>
         <Stagger i={k++}>
           <Text style={styles.caption}>My Portfolio</Text>
           <Text style={styles.balance}>$128,420.55</Text>
