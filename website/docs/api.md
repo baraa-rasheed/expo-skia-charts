@@ -50,6 +50,7 @@ export interface BaseChartProps {
   backgroundColor?: string;
   /** GPU effects: shadow, glow, blur, colour filter, blend mode, dash/corner path effects, clip reveal, SkSL shader. */
   effects?: ChartEffects;
+  gradient?: ChartGradient; // see Gradients
 }
 ```
 
@@ -77,6 +78,10 @@ _src/effects/EffectsLayer.tsx_
 /** Built-in SkSL runtime shaders, composited over the chart with `srcATop` so they only tint drawn pixels. */
 export type ShaderPreset = 'none' | 'shimmer' | 'aurora' | 'scanlines';
 ```
+
+## `ChartGradient`
+
+`{ type?: 'linear' | 'radial' | 'sweep'; colors: string[]; positions?: number[]; start?: [x, y]; end?: [x, y]; center?: [x, y]; radius?: number; mode?: 'tint' | 'overlay'; opacity?: number }`. See [Gradients](./gradients).
 
 ## `ChartEffects`
 

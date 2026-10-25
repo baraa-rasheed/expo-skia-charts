@@ -21,7 +21,7 @@ Every chart accepts an `effects` prop. All effects are executed by Skia Graphite
 />
 ```
 
-<div className="placeholder">Screenshot placeholder — Playground screen with glow + shimmer.</div>
+<div className="placeholder">Screenshot placeholder — Customize sheet with glow + shimmer.</div>
 
 | Option | Type | Skia primitive | Notes |
 | --- | --- | --- | --- |
