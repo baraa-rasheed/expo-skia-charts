@@ -16,7 +16,22 @@ export interface RadarChartProps extends Omit<BaseChartProps, 'padding'> {
 }
 
 /** Radar / spider chart. Polygons scale out from the center. */
-export const RadarChart = ({ effects, gradient, width, height, style, axes, series, max, rings = 4, gridColor = 'rgba(128,128,128,0.3)', labelColor = '#666', font, animation, backgroundColor }: RadarChartProps) => {
+export const RadarChart = ({
+  effects,
+  gradient,
+  width,
+  height,
+  style,
+  axes,
+  series,
+  max,
+  rings = 4,
+  gridColor = 'rgba(128,128,128,0.3)',
+  labelColor = '#666',
+  font,
+  animation,
+  backgroundColor,
+}: RadarChartProps) => {
   const cx = width / 2;
   const cy = height / 2;
   const r = Math.min(width, height) / 2 - (font ? 28 : 8);
@@ -30,7 +45,8 @@ export const RadarChart = ({ effects, gradient, width, height, style, axes, seri
       for (let i = 0; i < n; i++) {
         const x = cx + Math.cos(angle(i)) * rr;
         const y = cy + Math.sin(angle(i)) * rr;
-        if (i === 0) p.moveTo(x, y); else p.lineTo(x, y);
+        if (i === 0) p.moveTo(x, y);
+        else p.lineTo(x, y);
       }
       p.close();
       return p.detach();
@@ -41,7 +57,8 @@ export const RadarChart = ({ effects, gradient, width, height, style, axes, seri
         const rr = (Math.min(v, m) / m) * r;
         const x = cx + Math.cos(angle(i)) * rr;
         const y = cy + Math.sin(angle(i)) * rr;
-        if (i === 0) p.moveTo(x, y); else p.lineTo(x, y);
+        if (i === 0) p.moveTo(x, y);
+        else p.lineTo(x, y);
       });
       p.close();
       return p.detach();
@@ -50,31 +67,47 @@ export const RadarChart = ({ effects, gradient, width, height, style, axes, seri
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [series, rings, r, cx, cy, n, m]);
   const progress = useEntryProgress(animation, [polys]);
-  const transform = useDerivedValue(() => [{ translateX: cx }, { translateY: cy }, { scale: progress.value }, { translateX: -cx }, { translateY: -cy }]);
+  const transform = useDerivedValue(() => [
+    { translateX: cx },
+    { translateY: cy },
+    { scale: progress.value },
+    { translateX: -cx },
+    { translateY: -cy },
+  ]);
   return (
     <Canvas style={[{ width, height, backgroundColor }, style]}>
       <EffectsLayer effects={effects} gradient={gradient} width={width} height={height}>
-      {grid.map((p, i) => <Path key={`g${i}`} path={p} style="stroke" color={gridColor} strokeWidth={1} />)}
-      {axes.map((a, i) => {
-        const x = cx + Math.cos(angle(i)) * r;
-        const y = cy + Math.sin(angle(i)) * r;
-        const lx = cx + Math.cos(angle(i)) * (r + 14);
-        const ly = cy + Math.sin(angle(i)) * (r + 14);
-        return (
-          <Group key={`a${i}`}>
-            <Line p1={vec(cx, cy)} p2={vec(x, y)} color={gridColor} strokeWidth={1} />
-            {font ? <Text x={lx - font.measureText(a).width / 2} y={ly + font.getSize() / 3} text={a} font={font} color={labelColor} /> : null}
-          </Group>
-        );
-      })}
-      <Group transform={transform}>
-        {polys.map((p, i) => (
-          <Group key={`p${i}`}>
-            <Path path={p} color={series[i]!.color} opacity={series[i]!.fillOpacity ?? 0.25} />
-            <Path path={p} color={series[i]!.color} style="stroke" strokeWidth={2} strokeJoin="round" />
-          </Group>
+        {grid.map((p, i) => (
+          <Path key={`g${i}`} path={p} style="stroke" color={gridColor} strokeWidth={1} />
         ))}
-      </Group>
+        {axes.map((a, i) => {
+          const x = cx + Math.cos(angle(i)) * r;
+          const y = cy + Math.sin(angle(i)) * r;
+          const lx = cx + Math.cos(angle(i)) * (r + 14);
+          const ly = cy + Math.sin(angle(i)) * (r + 14);
+          return (
+            <Group key={`a${i}`}>
+              <Line p1={vec(cx, cy)} p2={vec(x, y)} color={gridColor} strokeWidth={1} />
+              {font ? (
+                <Text
+                  x={lx - font.measureText(a).width / 2}
+                  y={ly + font.getSize() / 3}
+                  text={a}
+                  font={font}
+                  color={labelColor}
+                />
+              ) : null}
+            </Group>
+          );
+        })}
+        <Group transform={transform}>
+          {polys.map((p, i) => (
+            <Group key={`p${i}`}>
+              <Path path={p} color={series[i]!.color} opacity={series[i]!.fillOpacity ?? 0.25} />
+              <Path path={p} color={series[i]!.color} style="stroke" strokeWidth={2} strokeJoin="round" />
+            </Group>
+          ))}
+        </Group>
       </EffectsLayer>
     </Canvas>
   );

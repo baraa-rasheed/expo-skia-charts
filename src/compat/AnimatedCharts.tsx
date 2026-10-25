@@ -5,11 +5,20 @@
  */
 import React, { createContext, useContext, useMemo, type ReactNode } from 'react';
 import { TextInput, type TextInputProps, type TextStyle, type StyleProp, type ViewStyle } from 'react-native';
-import Animated, { useAnimatedProps, useAnimatedStyle, useDerivedValue, useSharedValue, type SharedValue } from 'react-native-reanimated';
+import Animated, {
+  useAnimatedProps,
+  useAnimatedStyle,
+  useDerivedValue,
+  useSharedValue,
+  type SharedValue,
+} from 'react-native-reanimated';
 import { LineChart } from '../charts/LineChart';
 import type { CurveType, DataPoint } from '../types';
 
-export interface ChartData { points: DataPoint[]; smoothingStrategy?: 'bezier' | 'simple' | 'none' }
+export interface ChartData {
+  points: DataPoint[];
+  smoothingStrategy?: 'bezier' | 'simple' | 'none';
+}
 
 interface Ctx {
   data: ChartData;
@@ -35,15 +44,35 @@ export const ChartPathProvider = ({ data, children }: { data: ChartData; childre
   const positionX = useSharedValue(-1);
   const positionY = useSharedValue(-1);
   const index = useSharedValue(-1);
-  const value = useMemo(() => ({ data, isActive, originalX, originalY, positionX, positionY, index }), [data, isActive, originalX, originalY, positionX, positionY, index]);
+  const value = useMemo(
+    () => ({ data, isActive, originalX, originalY, positionX, positionY, index }),
+    [data, isActive, originalX, originalY, positionX, positionY, index],
+  );
   return <ChartContext.Provider value={value}>{children}</ChartContext.Provider>;
 };
 
-export interface ChartPathProps { width: number; height: number; stroke?: string; strokeWidth?: number; fill?: boolean; style?: StyleProp<ViewStyle>; curve?: CurveType }
+export interface ChartPathProps {
+  width: number;
+  height: number;
+  stroke?: string;
+  strokeWidth?: number;
+  fill?: boolean;
+  style?: StyleProp<ViewStyle>;
+  curve?: CurveType;
+}
 
-export const ChartPath = ({ width, height, stroke = '#6C5CE7', strokeWidth = 3, fill = false, style, curve }: ChartPathProps) => {
+export const ChartPath = ({
+  width,
+  height,
+  stroke = '#6C5CE7',
+  strokeWidth = 3,
+  fill = false,
+  style,
+  curve,
+}: ChartPathProps) => {
   const { data, isActive, originalX, originalY, index, positionX, positionY } = useChartData();
-  const strategy = data.smoothingStrategy === 'none' || data.smoothingStrategy === 'simple' ? 'linear' : 'monotone';
+  const strategy =
+    data.smoothingStrategy === 'none' || data.smoothingStrategy === 'simple' ? 'linear' : 'monotone';
   const pts = data.points;
   const ys = pts.map((p) => p.y);
   const minY = Math.min(...ys);
@@ -52,8 +81,17 @@ export const ChartPath = ({ width, height, stroke = '#6C5CE7', strokeWidth = 3, 
   const maxX = pts[pts.length - 1]?.x ?? 1;
   return (
     <LineChart
-      width={width} height={height} style={style} data={pts} color={stroke} strokeWidth={strokeWidth} fill={fill} curve={curve ?? strategy}
-      showGrid={false} padding={8} cursorColor="transparent"
+      width={width}
+      height={height}
+      style={style}
+      data={pts}
+      color={stroke}
+      strokeWidth={strokeWidth}
+      fill={fill}
+      curve={curve ?? strategy}
+      showGrid={false}
+      padding={8}
+      cursorColor="transparent"
       onScrub={(p, i) => {
         index.value = i;
         isActive.value = p !== null;
@@ -66,22 +104,62 @@ export const ChartPath = ({ width, height, stroke = '#6C5CE7', strokeWidth = 3, 
   );
 };
 
-export const ChartDot = ({ size = 10, color = '#6C5CE7', style }: { size?: number; color?: string; style?: StyleProp<ViewStyle> }) => {
+export const ChartDot = ({
+  size = 10,
+  color = '#6C5CE7',
+  style,
+}: {
+  size?: number;
+  color?: string;
+  style?: StyleProp<ViewStyle>;
+}) => {
   const { isActive, positionX, positionY } = useChartData();
   const s = useAnimatedStyle(() => ({
     opacity: isActive.value ? 1 : 0,
     transform: [{ translateX: positionX.value - size / 2 }, { translateY: positionY.value - size / 2 }],
   }));
-  return <Animated.View pointerEvents="none" style={[{ position: 'absolute', left: 0, top: 0, width: size, height: size, borderRadius: size / 2, backgroundColor: color }, style, s]} />;
+  return (
+    <Animated.View
+      pointerEvents="none"
+      style={[
+        {
+          position: 'absolute',
+          left: 0,
+          top: 0,
+          width: size,
+          height: size,
+          borderRadius: size / 2,
+          backgroundColor: color,
+        },
+        style,
+        s,
+      ]}
+    />
+  );
 };
 
 Animated.addWhitelistedNativeProps?.({ text: true });
 const AnimatedTextInput = Animated.createAnimatedComponent(TextInput);
 
-const Label = ({ source, format, style }: { source: SharedValue<string>; format?: (v: string) => string; style?: StyleProp<TextStyle> }) => {
+const Label = ({
+  source,
+  format,
+  style,
+}: {
+  source: SharedValue<string>;
+  format?: (v: string) => string;
+  style?: StyleProp<TextStyle>;
+}) => {
   const text = useDerivedValue(() => (format ? format(source.value) : source.value));
   const animatedProps = useAnimatedProps(() => ({ text: text.value }) as unknown as Partial<TextInputProps>);
-  return <AnimatedTextInput editable={false} underlineColorAndroid="transparent" style={style} animatedProps={animatedProps} />;
+  return (
+    <AnimatedTextInput
+      editable={false}
+      underlineColorAndroid="transparent"
+      style={style}
+      animatedProps={animatedProps}
+    />
+  );
 };
 
 /** `format` must be a worklet. */
@@ -95,7 +173,13 @@ export const ChartXLabel = (p: { format?: (v: string) => string; style?: StylePr
 };
 
 /** Monotone-cubic helper kept for API familiarity with rainbow's `monotoneCubicInterpolation`. */
-export const monotoneCubicInterpolation = ({ data, range = 80 }: { data: DataPoint[]; range?: number }): DataPoint[] => {
+export const monotoneCubicInterpolation = ({
+  data,
+  range = 80,
+}: {
+  data: DataPoint[];
+  range?: number;
+}): DataPoint[] => {
   if (data.length < 2) return data;
   const minX = data[0]!.x;
   const maxX = data[data.length - 1]!.x;

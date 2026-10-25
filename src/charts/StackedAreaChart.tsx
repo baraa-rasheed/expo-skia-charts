@@ -23,7 +23,24 @@ export interface StackedAreaChartProps extends BaseChartProps, ZoomableProps {
 }
 
 /** Stacked (or 100%-stacked) area chart. Bands grow up from the baseline. */
-export const StackedAreaChart = ({ effects, gradient, width, height, style, series, curve = 'monotone', percent = false, showGrid = true, formatY, fillOpacity = 0.85, font, animation, backgroundColor, padding, zoom }: StackedAreaChartProps) => {
+export const StackedAreaChart = ({
+  effects,
+  gradient,
+  width,
+  height,
+  style,
+  series,
+  curve = 'monotone',
+  percent = false,
+  showGrid = true,
+  formatY,
+  fillOpacity = 0.85,
+  font,
+  animation,
+  backgroundColor,
+  padding,
+  zoom,
+}: StackedAreaChartProps) => {
   const pad = resolvePadding(padding, 16);
   if (font) pad.left = Math.max(pad.left, 36);
   const { bands, yS, ticks } = useMemo(() => {
@@ -35,7 +52,8 @@ export const StackedAreaChart = ({ effects, gradient, width, height, style, seri
     const acc = new Array<number>(n).fill(0);
     const out = series.map((s) => {
       const lower = acc.map((v, i) => ({ x: xS(i), y: ys(v) }));
-      for (let i = 0; i < n; i++) acc[i]! += percent ? ((s.data[i] ?? 0) / (totals[i] || 1)) * 100 : (s.data[i] ?? 0);
+      for (let i = 0; i < n; i++)
+        acc[i]! += percent ? ((s.data[i] ?? 0) / (totals[i] || 1)) * 100 : (s.data[i] ?? 0);
       const upper = acc.map((v, i) => ({ x: xS(i), y: ys(v) }));
       return { path: buildBandPath(upper, lower, curve), color: s.color };
     });
@@ -43,19 +61,35 @@ export const StackedAreaChart = ({ effects, gradient, width, height, style, seri
   }, [series, percent, curve, width, height, pad.left, pad.right, pad.top, pad.bottom]);
   const progress = useEntryProgress(animation, [bands]);
   const base = height - pad.bottom;
-  const transform = useDerivedValue(() => [{ translateY: base }, { scaleY: progress.value }, { translateY: -base }]);
+  const transform = useDerivedValue(() => [
+    { translateY: base },
+    { scaleY: progress.value },
+    { translateY: -base },
+  ]);
   return (
     <ChartFrame zoom={zoom} width={width} height={height}>
-    <Canvas style={[{ width, height, backgroundColor }, style]}>
-      <ZoomGroup>
-      {showGrid ? <Grid width={width} height={height} padding={pad} yTicks={ticks} yScale={yS} font={font} formatY={formatY ?? (percent ? (v) => `${v}%` : undefined)} /> : null}
-      <EffectsLayer effects={effects} gradient={gradient} width={width} height={height}>
-      <Group transform={transform}>
-        {bands.map((b, i) => <Path key={i} path={b.path} color={b.color} opacity={fillOpacity} />)}
-      </Group>
-      </EffectsLayer>
-      </ZoomGroup>
-    </Canvas>
+      <Canvas style={[{ width, height, backgroundColor }, style]}>
+        <ZoomGroup>
+          {showGrid ? (
+            <Grid
+              width={width}
+              height={height}
+              padding={pad}
+              yTicks={ticks}
+              yScale={yS}
+              font={font}
+              formatY={formatY ?? (percent ? (v) => `${v}%` : undefined)}
+            />
+          ) : null}
+          <EffectsLayer effects={effects} gradient={gradient} width={width} height={height}>
+            <Group transform={transform}>
+              {bands.map((b, i) => (
+                <Path key={i} path={b.path} color={b.color} opacity={fillOpacity} />
+              ))}
+            </Group>
+          </EffectsLayer>
+        </ZoomGroup>
+      </Canvas>
     </ChartFrame>
   );
 };
