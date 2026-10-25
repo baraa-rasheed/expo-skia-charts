@@ -4,6 +4,8 @@ title: Getting started
 slug: /intro
 ---
 
+import ChartGrid from '@site/src/components/ChartGrid';
+
 GPU-accelerated, animated charts for **React Native & Expo**, drawn with [react-native-skia](https://github.com/wcandillon/react-native-skia) v3 (Skia Graphite) and animated on the UI thread with Reanimated.
 
 ![](/img/logo.svg)
@@ -13,6 +15,12 @@ What sets it apart:
 - **Touch first.** Line, area and candle charts scrub. Bars, slices, points, cells and rings respond to a tap or long-press. Any chart with axes can be pinched and panned. See [Interaction](./interaction.md).
 - **One prop shape.** Every chart takes pixel `width`/`height`, plain-array data and the same `gradient` / `effects` / `animation` props.
 - **Agent-ready.** `AGENTS.md` ships in the package, and [the agent guide](./agents.md) and `/llms.txt` are published with the docs.
+
+## Chart types
+
+Tap a chart to open its page.
+
+<ChartGrid />
 
 ## Install
 
