@@ -11,6 +11,7 @@ import { Grid } from './Grid';
 export interface BarChartProps extends BaseChartProps {
   /** Single series shorthand. */
   data?: number[];
+  /** Primary mark colour (hex). */
   color?: string;
   series?: BarSeries[];
   /** Stack series on top of each other instead of grouping side by side. */
@@ -20,7 +21,9 @@ export interface BarChartProps extends BaseChartProps {
   /** 0..1 fraction of the slot occupied by bars. */
   barWidthRatio?: number;
   radius?: number;
+  /** Draw horizontal grid lines (axis labels also need `font`). */
   showGrid?: boolean;
+  /** Formats y-axis labels, e.g. `(v) => "$" + v.toFixed(0)`. */
   formatY?: (v: number) => string;
   /** Stagger between bars, ms-equivalent fraction (0..1) of total duration. */
   stagger?: number;

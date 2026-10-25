@@ -16,9 +16,13 @@ export interface CandlestickChartProps extends BaseChartProps {
   negativeColor?: string;
   /** 'candle' (default) or 'ohlc' bars. */
   variant?: 'candle' | 'ohlc';
+  /** Draw horizontal grid lines (axis labels also need `font`). */
   showGrid?: boolean;
+  /** Formats y-axis labels, e.g. `(v) => "$" + v.toFixed(0)`. */
   formatY?: (v: number) => string;
+  /** Enable press-and-drag crosshair. */
   interactive?: boolean;
+  /** Fires on the JS thread while scrubbing; `null` when released. */
   onScrub?: (candle: Candle | null, index: number) => void;
 }
 
