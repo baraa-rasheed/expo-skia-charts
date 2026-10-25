@@ -35,6 +35,8 @@ Charts: Line, Area, Bar, Stacked Area, Pie/Donut, Radar, Gauge, Progress Rings, 
 
 Every chart accepts an `effects` prop: shadow, glow, blur, colour filters, blend modes, dash/corner path effects, clip reveal, and SkSL shaders. See [GPU effects](https://baraa-rasheed.github.io/expo-skia-charts/docs/effects).
 
+Every chart also accepts a `gradient` prop: linear, radial, or sweep GPU gradients with custom colours, positions, and start, end, or centre points. See [Gradients](https://baraa-rasheed.github.io/expo-skia-charts/docs/gradients).
+
 ## Example app
 
 ```sh
