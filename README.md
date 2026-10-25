@@ -4,6 +4,15 @@ GPU-accelerated charts for Expo / React Native, built on **react-native-skia v3.
 
 ### 📖 Docs: **https://baraa-rasheed.github.io/expo-skia-charts/**
 
+## 🤖 Agent-ready
+
+Built for AI coding agents (Cursor, Claude, Grok, Copilot) as a first-class feature:
+
+- **[`AGENTS.md`](AGENTS.md)**: the rules, a component picker and a canonical snippet. Agents pick it up automatically.
+- **[Agent guide](https://baraa-rasheed.github.io/expo-skia-charts/docs/agents)** and [`llms.txt`](https://baraa-rasheed.github.io/expo-skia-charts/llms.txt).
+- **[Type-checked recipes](example/recipes/agent-recipes.tsx)** for every chart, compiled under strict TypeScript.
+- **Predictable API**: required pixel `width`/`height`, plain-array data, and the same optional `gradient` and `effects` props on every chart. Every exported prop has JSDoc.
+
 ## Install
 
 ```sh
