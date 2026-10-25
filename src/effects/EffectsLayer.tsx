@@ -1,7 +1,23 @@
 import React, { useEffect, useMemo } from 'react';
 import {
-  Blur, BlurMask, ColorMatrix, CornerPathEffect, DashPathEffect, Fill, Group, LinearGradient, Paint, RadialGradient, Rect, Shader, Shadow, Skia,
-  SweepGradient, rect, useClock, vec,
+  Blur,
+  BlurMask,
+  ColorMatrix,
+  CornerPathEffect,
+  DashPathEffect,
+  Fill,
+  Group,
+  LinearGradient,
+  Paint,
+  RadialGradient,
+  Rect,
+  Shader,
+  Shadow,
+  Skia,
+  SweepGradient,
+  rect,
+  useClock,
+  vec,
   type SkRuntimeEffect,
 } from 'react-native-skia';
 import { Easing, useDerivedValue, useSharedValue, withTiming } from 'react-native-reanimated';
@@ -9,14 +25,33 @@ import { Easing, useDerivedValue, useSharedValue, withTiming } from 'react-nativ
 /** 4x5 colour matrices for the built-in colour-filter presets (GPU colour filter). */
 export const COLOR_MATRICES = {
   none: null,
-  grayscale: [0.2126, 0.7152, 0.0722, 0, 0, 0.2126, 0.7152, 0.0722, 0, 0, 0.2126, 0.7152, 0.0722, 0, 0, 0, 0, 0, 1, 0],
+  grayscale: [
+    0.2126, 0.7152, 0.0722, 0, 0, 0.2126, 0.7152, 0.0722, 0, 0, 0.2126, 0.7152, 0.0722, 0, 0, 0, 0, 0, 1, 0,
+  ],
   sepia: [0.393, 0.769, 0.189, 0, 0, 0.349, 0.686, 0.168, 0, 0, 0.272, 0.534, 0.131, 0, 0, 0, 0, 0, 1, 0],
   invert: [-1, 0, 0, 0, 1, 0, -1, 0, 0, 1, 0, 0, -1, 0, 1, 0, 0, 0, 1, 0],
   saturate: [1.6, -0.3, -0.3, 0, 0, -0.3, 1.6, -0.3, 0, 0, -0.3, -0.3, 1.6, 0, 0, 0, 0, 0, 1, 0],
 } as const;
 export type ColorFilterPreset = keyof typeof COLOR_MATRICES;
 
-export type ChartBlendMode = 'srcOver' | 'multiply' | 'screen' | 'overlay' | 'darken' | 'lighten' | 'colorDodge' | 'colorBurn' | 'hardLight' | 'softLight' | 'difference' | 'exclusion' | 'plus' | 'hue' | 'saturation' | 'color' | 'luminosity';
+export type ChartBlendMode =
+  | 'srcOver'
+  | 'multiply'
+  | 'screen'
+  | 'overlay'
+  | 'darken'
+  | 'lighten'
+  | 'colorDodge'
+  | 'colorBurn'
+  | 'hardLight'
+  | 'softLight'
+  | 'difference'
+  | 'exclusion'
+  | 'plus'
+  | 'hue'
+  | 'saturation'
+  | 'color'
+  | 'luminosity';
 
 /** Built-in SkSL runtime shaders, composited over the chart with `srcATop` so they only tint drawn pixels. */
 export type ShaderPreset = 'none' | 'shimmer' | 'aurora' | 'scanlines';
@@ -53,12 +88,26 @@ const GradientShader = ({ g, width, height }: { g: ChartGradient; width: number;
   const [cx, cy] = g.center ?? [0.5, 0.5];
   const c = vec(cx * width, cy * height);
   if (g.type === 'radial') {
-    return <RadialGradient c={c} r={(g.radius ?? 1) * Math.max(width, height) / 2} colors={g.colors} positions={g.positions} />;
+    return (
+      <RadialGradient
+        c={c}
+        r={((g.radius ?? 1) * Math.max(width, height)) / 2}
+        colors={g.colors}
+        positions={g.positions}
+      />
+    );
   }
   if (g.type === 'sweep') return <SweepGradient c={c} colors={g.colors} positions={g.positions} />;
   const [sx, sy] = g.start ?? [0.5, 0];
   const [ex, ey] = g.end ?? [0.5, 1];
-  return <LinearGradient start={vec(sx * width, sy * height)} end={vec(ex * width, ey * height)} colors={g.colors} positions={g.positions} />;
+  return (
+    <LinearGradient
+      start={vec(sx * width, sy * height)}
+      end={vec(ex * width, ey * height)}
+      colors={g.colors}
+      positions={g.positions}
+    />
+  );
 };
 
 export interface ChartEffects {
@@ -96,7 +145,15 @@ const getEffect = (k: Exclude<ShaderPreset, 'none'>): SkRuntimeEffect | null => 
   return compiled[k] ?? null;
 };
 
-const ShaderOverlay = ({ preset, width, height }: { preset: Exclude<ShaderPreset, 'none'>; width: number; height: number }) => {
+const ShaderOverlay = ({
+  preset,
+  width,
+  height,
+}: {
+  preset: Exclude<ShaderPreset, 'none'>;
+  width: number;
+  height: number;
+}) => {
   const source = getEffect(preset);
   const clock = useClock();
   const uniforms = useDerivedValue(() => ({ t: clock.value / 1000, size: [width, height] }));
@@ -113,28 +170,61 @@ const ShaderOverlay = ({ preset, width, height }: { preset: Exclude<ShaderPreset
  * Everything here runs on the GPU (Graphite): image filters, colour filters, blend modes, path effects,
  * clipping and the offscreen layer (`<Group layer>` = saveLayer into a GPU render target).
  */
-export const EffectsLayer = ({ effects, gradient, width, height, children, revealKey }: {
-  effects?: ChartEffects; gradient?: ChartGradient; width: number; height: number; children: React.ReactNode; revealKey?: unknown;
+export const EffectsLayer = ({
+  effects,
+  gradient,
+  width,
+  height,
+  children,
+  revealKey,
+}: {
+  effects?: ChartEffects;
+  gradient?: ChartGradient;
+  width: number;
+  height: number;
+  children: React.ReactNode;
+  revealKey?: unknown;
 }) => {
   const e = effects ?? {};
   const reveal = useSharedValue(e.clipReveal ? 0 : 1);
   useEffect(() => {
-    if (!e.clipReveal) { reveal.value = 1; return; }
+    if (!e.clipReveal) {
+      reveal.value = 1;
+      return;
+    }
     reveal.value = 0;
     reveal.value = withTiming(1, { duration: e.clipReveal, easing: Easing.out(Easing.cubic) });
   }, [e.clipReveal, revealKey, reveal]);
   const clip = useDerivedValue(() => rect(0, 0, width * reveal.value, height));
 
   const shadow = e.shadow === true ? {} : e.shadow || null;
-  const matrix = typeof e.colorFilter === 'string' ? COLOR_MATRICES[e.colorFilter] : e.colorFilter ?? null;
-  const needsLayer = !!(shadow || e.blur || matrix || e.blendMode || (e.shader && e.shader !== 'none') || (gradient && gradient.colors.length >= 2));
-  const layer = useMemo(() => needsLayer ? (
-    <Paint blendMode={e.blendMode}>
-      {e.blur ? <Blur blur={e.blur} /> : null}
-      {shadow ? <Shadow dx={shadow.dx ?? 0} dy={shadow.dy ?? 6} blur={shadow.blur ?? 8} color={shadow.color ?? 'rgba(0,0,0,0.35)'} /> : null}
-      {matrix ? <ColorMatrix matrix={[...matrix]} /> : null}
-    </Paint>
-  ) : undefined, [needsLayer, e.blendMode, e.blur, shadow?.dx, shadow?.dy, shadow?.blur, shadow?.color, matrix]);
+  const matrix = typeof e.colorFilter === 'string' ? COLOR_MATRICES[e.colorFilter] : (e.colorFilter ?? null);
+  const needsLayer = !!(
+    shadow ||
+    e.blur ||
+    matrix ||
+    e.blendMode ||
+    (e.shader && e.shader !== 'none') ||
+    (gradient && gradient.colors.length >= 2)
+  );
+  const layer = useMemo(
+    () =>
+      needsLayer ? (
+        <Paint blendMode={e.blendMode}>
+          {e.blur ? <Blur blur={e.blur} /> : null}
+          {shadow ? (
+            <Shadow
+              dx={shadow.dx ?? 0}
+              dy={shadow.dy ?? 6}
+              blur={shadow.blur ?? 8}
+              color={shadow.color ?? 'rgba(0,0,0,0.35)'}
+            />
+          ) : null}
+          {matrix ? <ColorMatrix matrix={[...matrix]} /> : null}
+        </Paint>
+      ) : undefined,
+    [needsLayer, e.blendMode, e.blur, shadow?.dx, shadow?.dy, shadow?.blur, shadow?.color, matrix],
+  );
 
   const pathEffects = (
     <>
@@ -158,12 +248,20 @@ export const EffectsLayer = ({ effects, gradient, width, height, children, revea
           {children}
         </Group>
         {gradient && gradient.colors.length >= 2 ? (
-          <Rect x={0} y={0} width={width} height={height} blendMode={gradient.mode === 'overlay' ? 'srcATop' : 'srcIn'}
-            opacity={gradient.mode === 'overlay' ? (gradient.opacity ?? 0.6) : 1}>
+          <Rect
+            x={0}
+            y={0}
+            width={width}
+            height={height}
+            blendMode={gradient.mode === 'overlay' ? 'srcATop' : 'srcIn'}
+            opacity={gradient.mode === 'overlay' ? (gradient.opacity ?? 0.6) : 1}
+          >
             <GradientShader g={gradient} width={width} height={height} />
           </Rect>
         ) : null}
-        {e.shader && e.shader !== 'none' ? <ShaderOverlay preset={e.shader} width={width} height={height} /> : null}
+        {e.shader && e.shader !== 'none' ? (
+          <ShaderOverlay preset={e.shader} width={width} height={height} />
+        ) : null}
       </Group>
     </Group>
   );

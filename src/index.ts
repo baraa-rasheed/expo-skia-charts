@@ -40,9 +40,21 @@ export { usePathTransition } from './hooks/usePathTransition';
 export { buildLinePath, buildAreaPath, buildBandPath, arcPath, slicePath } from './utils/path';
 export { linearScale, extent, niceTicks } from './utils/scale';
 export {
-  ChartPathProvider, ChartPath, ChartDot, ChartYLabel, ChartXLabel, useChartData, monotoneCubicInterpolation,
+  ChartPathProvider,
+  ChartPath,
+  ChartDot,
+  ChartYLabel,
+  ChartXLabel,
+  useChartData,
+  monotoneCubicInterpolation,
 } from './compat/AnimatedCharts';
 export type { ChartData, ChartPathProps } from './compat/AnimatedCharts';
 export { EffectsLayer, COLOR_MATRICES } from './effects/EffectsLayer';
-export type { ChartEffects, ChartGradient, ChartBlendMode, ColorFilterPreset, ShaderPreset } from './effects/EffectsLayer';
+export type {
+  ChartEffects,
+  ChartGradient,
+  ChartBlendMode,
+  ColorFilterPreset,
+  ShaderPreset,
+} from './effects/EffectsLayer';
 export * from './interaction';

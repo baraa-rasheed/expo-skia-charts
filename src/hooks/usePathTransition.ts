@@ -1,6 +1,12 @@
 import { useEffect, useRef } from 'react';
 import type { SkPath } from 'react-native-skia';
-import { Easing, useDerivedValue, useSharedValue, withTiming, type SharedValue } from 'react-native-reanimated';
+import {
+  Easing,
+  useDerivedValue,
+  useSharedValue,
+  withTiming,
+  type SharedValue,
+} from 'react-native-reanimated';
 
 /**
  * Morphs from the previous path to the next one on the UI thread (like rainbow's animated charts),

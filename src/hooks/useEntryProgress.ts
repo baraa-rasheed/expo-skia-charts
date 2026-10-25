@@ -6,7 +6,10 @@ import type { AnimationConfig } from '../types';
  * Shared value animating 0 → 1 on the UI thread whenever `deps` change.
  * All charts derive geometry from this inside worklets so no JS frames are spent animating.
  */
-export const useEntryProgress = (animation: AnimationConfig | undefined, deps: readonly unknown[]): SharedValue<number> => {
+export const useEntryProgress = (
+  animation: AnimationConfig | undefined,
+  deps: readonly unknown[],
+): SharedValue<number> => {
   const duration = animation?.duration ?? 600;
   const delay = animation?.delay ?? 0;
   const progress = useSharedValue(duration === 0 ? 1 : 0);
