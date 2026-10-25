@@ -2,6 +2,6 @@
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
     "strict": true,
-    "paths": { "expo-skia-charts": ["../src/index.ts"] }
+    "paths": { "react-native-skia-chart": ["../src/index.ts"] }
   }
 }

@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Skia Charts Example",
-    "slug": "expo-skia-charts-example",
+    "slug": "react-native-skia-chart-example",
     "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "dark",

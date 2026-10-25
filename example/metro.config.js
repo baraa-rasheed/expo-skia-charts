@@ -8,7 +8,7 @@ const config = getDefaultConfig(projectRoot);
 
 config.watchFolders = [libRoot];
 config.resolver.nodeModulesPaths = [path.resolve(projectRoot, 'node_modules')];
-config.resolver.extraNodeModules = { 'expo-skia-charts': path.join(libRoot, 'src') };
+config.resolver.extraNodeModules = { 'react-native-skia-chart': path.join(libRoot, 'src') };
 // Ensure a single copy of peer deps.
 config.resolver.blockList = [new RegExp(`${libRoot}/node_modules/(react|react-native|react-native-skia|react-native-reanimated|react-native-gesture-handler|react-native-worklets)/.*`)];
 
