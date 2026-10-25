@@ -75,7 +75,7 @@ export const Playground = () => {
     <View style={{ gap: 16 }}>
       <Card title="Preview" subtitle={scrub ? `x ${scrub.x} · y ${scrub.y}` : 'Press & drag line/area charts to scrub'}>
         <View key={`${kind}-${seed}`}>{chart}</View>
-        <Button title="Shuffle data (morph)" onPress={() => setSeed((s) => s + 1)} />
+        <Button title="Randomize (morph)" onPress={() => setSeed((s) => s + 1)} />
       </Card>
       <Card title="Chart">
         <ChipGroup label="Type" options={KINDS} value={kind} onChange={setKind} />
